@@ -1,0 +1,7 @@
+nimcache/
+
+# Vim backup file
+*.swp
+*.un~
+
+*.exe

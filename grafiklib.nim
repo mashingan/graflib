@@ -1,3 +1,8 @@
+# grafiklib
+# Copyright Rahmatullah
+# A minimum graph implementation library
+# License MIT
+
 import sequtils
 
 type
@@ -147,9 +152,9 @@ proc paths*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R]): seq[seq[Vertex[T,R]]] 
             else: graph.edges.concat(graph.edges.map swapEdge)
     tempresult = newSeq[seq[Vertex[T,R]]]()
 
-  template outFilt (x: typed): untyped =
-    edges.filter(proc (e: Edge[T,R]):bool = x.label == e.node1)
-         .map(proc (e: Edge[T,R]): Vertex = Vertex[T,R](label:e.node2, weight:e.weight))
+  template outFilt (x: untyped): untyped =
+    edges.filterIt( x.label == it.node1 )
+         .mapIt( Vertex[T, R](label: it.node2, weight: it.weight) )
 
   var outbounds = outFilt v1
   withinTrail: echo "current outbounds: ", outbounds
@@ -328,6 +333,3 @@ when isMainModule:
   for adj in gr.incidenceMatrix():
     echo adj
   ]#
-# grafiklib
-# Copyright Rahmatullah
-# A minimum graph implementation library

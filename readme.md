@@ -11,6 +11,12 @@ The current implementation able to
 
 Expansion will be planned when I have read/learn more about graph theory
 
+## Installation
 
-## License
+```
+$ nimble install https://github.com/mashingan/grafiklib
+```
+
+
+### License
 MIT

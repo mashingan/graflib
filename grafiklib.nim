@@ -12,6 +12,8 @@ type
     vertices*: seq[Vertex[T, R]]
     edges*: seq[Edge[T, R]]
 
+  Vertices*[T, R] = seq[Vertex[T, R]]
+
   Vertex*[T, R] = object
     label*: T
     weight*: R
@@ -26,6 +28,15 @@ type
 template withinTrail (body: typed): typed =
   when defined(trail):
     body
+
+
+proc `==`*(a, b: Vertex): bool =
+  a.label == b.label
+
+proc `==`*(a, b: Edge): bool =
+  result = a.node1 == b.node1 and
+           a.node2 == b.node2 and
+           a.weight == b.weight
 
 proc initEdge*[T, R](n1, n2: T, weight: R): Edge[T, R] =
   Edge[T, R](node1: n1, node2: n2, weight: weight)

@@ -7,14 +7,14 @@ import sequtils
 
 type
   Graph*[T, R] = object
-    directed: bool
-    weighted: bool
-    vertices: seq[Vertex[T, R]]
-    edges: seq[Edge[T, R]]
+    directed*: bool
+    weighted*: bool
+    vertices*: seq[Vertex[T, R]]
+    edges*: seq[Edge[T, R]]
 
   Vertex*[T, R] = object
-    label: T
-    weight: R
+    label*: T
+    weight*: R
 
   Edge*[T, R] = object
     node1: T
@@ -26,6 +26,9 @@ type
 template withinTrail (body: typed): typed =
   when defined(trail):
     body
+
+proc initEdge*[T, R](n1, n2: T, weight: R): Edge[T, R] =
+  Edge(node1: n1, node2: n2, weight: weight)
 
 proc isDirected* (graph: Graph): bool = graph.directed
 proc isWeighted*(graph: Graph): bool = graph.weighted

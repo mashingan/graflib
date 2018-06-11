@@ -28,7 +28,7 @@
 ##
 ##   .. code-block:: Nim
 ##     
-##     import sequtils
+##     from sequtils import mapIt
 ##     import graflib
 ##
 ##     # we build unweighted and undirected empty graph
@@ -43,6 +43,17 @@
 ##       ("origin1", "destination2", 0),
 ##       ("origin1", "origin2", 0)
 ##     ].mapIt( initEdge(it[0], it[1], it[2]) )
+##     doAssert(graph.edges.len == 4)
+##     doAssert(graph.vertices.len == 4)
+##
+##     # Find paths from origin to destination node
+##     var paths = graph.paths(initVertex("origin1", 0), initVertex("destination2", 0))
+##     doAssert(paths.len == 2)
+##     doAssert(paths[0] == @[initVertex("origin1", 0), initVertex("destination2", 0)])
+##
+##     # degree = indegree + outdegree
+##     doAssert(graph.degree(initVertex("origin1", 0)) == 3)
+##     doAssert(graph.degree(initVertex("origin2", 0)) == 2)
 
 import sequtils
 
@@ -175,26 +186,19 @@ proc `$`*(graph: Graph): string =
   result &= "\nedges: " & $(graph.edges)
 
 proc `$`*(edge: Edge): string =
-  $edge.node1 & ":" & $edge.node2
+  $edge.node1 & ":" & $edge.node2 & "@" & $edge.weight
 
 proc indegree*(graph: Graph, vertex: Vertex): int =
-  result = 0
-  for edge in graph.edges:
-    if vertex.label == edge.node2:
-      inc result
+  graph.edges.filterIt( it.node2 == vertex.label ).len
 
 proc outdegree*(graph: Graph, vertex: Vertex): int =
-  result = 0
-  for edge in graph.edges:
-    if vertex.label == edge.node1:
-      inc result
+  graph.edges.filterIt( it.node1 == vertex.label ).len
 
 proc degree*(graph: Graph, vertex: Vertex): int =
   graph.indegree(vertex) + graph.outdegree(vertex)
 
-proc buildDigraph*(): Graph =
-  result = Graph()
-  result.directed = true
+proc buildDigraph*[T, R](): Graph =
+  buildGraph[T, R](directed = true)
 
 proc newGraph*[T, R](): GraphRef[T, R] =
   GraphRef[T, R](vertices: @[], edges: @[], directed: false)

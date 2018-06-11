@@ -17,9 +17,9 @@ type
     weight*: R
 
   Edge*[T, R] = object
-    node1: T
-    node2: T
-    weight: R
+    node1*: T
+    node2*: T
+    weight*: R
 
   GraphRef*[T, R] = ref Graph[T, R]
 

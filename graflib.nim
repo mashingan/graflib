@@ -3,27 +3,77 @@
 # A minimum graph implementation library
 # License MIT
 
+## Graflib
+## *******
+##
+## A simple graph implementation library.
+## To scrutiny the trail when walking the graph, define ``withinTrail`` to
+## see in stdout the nodes visited.
+## Compile it:
+##
+## ::
+##
+##   $ nim c -d:withinTrail yourcodefile
+##
+## The current implementation walks into graph nodes to find the connection
+## between origin node to destination node without consider the weight cost
+## each edge has. The sequences of nodes (vertices) will have its each
+## vertex/node having weight which different with defined nodes' weight.
+## The weight resulted in sequence of vertices for each node is actually
+## the cost of calculated edge so we can use that together with algorithm
+## module to find out the total cost of resulting path.
+##
+## Example
+## -------
+##
+##   .. code-block:: Nim
+##     
+##     import sequtils
+##     import graflib
+##
+##     # we build unweighted and undirected empty graph
+##     var graph = buildGraph[char, int]()
+##     doAssert(graph.vertices.len == 0)
+##     doAssert(graph.edges.len == 0)
+##
+##     # Add edgest to our graph
+##     graph.addEdges [
+##       ("origin1", "destination1", 0),
+##       ("origin2", "destination2", 0),
+##       ("origin1", "destination2", 0),
+##       ("origin1", "origin2", 0)
+##     ].mapIt( initEdge(it[0], it[1], it[2]) )
+
 import sequtils
 
 type
   Graph*[T, R] = object
-    directed*: bool
-    weighted*: bool
-    vertices*: seq[Vertex[T, R]]
-    edges*: seq[Edge[T, R]]
+    ## Graph type that implemented generically using ``T`` type as label
+    ## and ``R`` as weight type.
+    directed*: bool               ## If true, every edge has only a direction
+                                  ## for each time its defined.
+    weighted*: bool               ## Whether the graph considered weighted
+    vertices*: seq[Vertex[T, R]]  ## Vertices or nodes
+    edges*: seq[Edge[T, R]]       ## Edge which spanned between node1 and node2
 
   Vertices*[T, R] = seq[Vertex[T, R]]
+    ## An alias for sequence of nodes.
 
   Vertex*[T, R] = object
-    label*: T
-    weight*: R
+    ## Node representation
+    label*: T     ## Label which used to identify node, usuall ``char`` or
+                  ## ``string``
+    weight*: R    ## Weight that will be used for various operations, such
+                  ## determining most cost efficient path
 
   Edge*[T, R] = object
+    ## Representation of two connected nodes with weight cost.
     node1*: T
     node2*: T
     weight*: R
 
   GraphRef*[T, R] = ref Graph[T, R]
+    ## Reference-type graph.
 
 template withinTrail (body: typed): typed =
   when defined(trail):

@@ -28,10 +28,10 @@ template withinTrail (body: typed): typed =
     body
 
 proc initEdge*[T, R](n1, n2: T, weight: R): Edge[T, R] =
-  Edge(node1: n1, node2: n2, weight: weight)
+  Edge[T, R](node1: n1, node2: n2, weight: weight)
 
 proc initVertex*[T, R](label: T, weight: R): Vertex[T, R] =
-  Vertex(label: label, weight: weight)
+  Vertex[T, R](label: label, weight: weight)
 
 proc isDirected* (graph: Graph): bool = graph.directed
 proc isWeighted*(graph: Graph): bool = graph.weighted

@@ -123,7 +123,7 @@ proc contains (edge: Edge, vertex: Vertex): bool =
   if vertex.label == edge.node1 or vertex.label == edge.node2: true
   else: false
 
-proc addVertices* (graph: var Graph, vertices: varargs[Vertex]) =
+proc addVertices*[T,R](graph: var Graph, vertices: varargs[Vertex[T,R]]) =
   for vertex in items(vertices):
     if vertex notin graph.vertices:
       graph.vertices.add vertex

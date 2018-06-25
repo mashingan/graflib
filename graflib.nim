@@ -1,4 +1,4 @@
-# grafiklib
+# graflib
 # Copyright Rahmatullah
 # A minimum graph implementation library
 # License MIT
@@ -54,6 +54,11 @@
 ##     # degree = indegree + outdegree
 ##     doAssert(graph.degree(initVertex("origin1", 0)) == 3)
 ##     doAssert(graph.degree(initVertex("origin2", 0)) == 2)
+##
+## When walking the connected graph, we can define our own **Action** type
+## that defaulted to *nil*.
+## *nil* value for *action* parameter for *paths* procedures will revert
+## back to ``==`` operator.
 
 import sequtils
 
@@ -85,6 +90,8 @@ type
 
   GraphRef*[T, R] = ref Graph[T, R]
     ## Reference-type graph.
+
+  Action*[T] = proc(a, b: T): bool
 
 template withinTrail (body: typed): typed =
   when defined(trail):
@@ -214,9 +221,16 @@ proc swapEdge[T,R](edge:Edge[T,R]): Edge[T,R] =
   Edge[T,R](node1: edge.node2, node2: edge.node1, weight: edge.weight)
 
 
-proc paths*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R]): seq[seq[Vertex[T,R]]] =
+proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R],
+    action: Action[T] = nil): seq[seq[Vertex[T,R]]] =
   if v1 notin graph.vertices or v2 notin graph.vertices:
     return @[]
+
+  var theact: Action[T]
+  if action.isNil:
+    theact = (proc(a, b: T): bool = a == b)
+  else:
+    theact = action
 
   var
     edges = if graph.isDirected: graph.edges
@@ -224,7 +238,7 @@ proc paths*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R]): seq[seq[Vertex[T,R]]] 
     tempresult = newSeq[seq[Vertex[T,R]]]()
 
   template outFilt (x: untyped): untyped =
-    edges.filterIt( x.label == it.node1 )
+    edges.filterIt( theact(x.label, it.node1) )
          .mapIt( Vertex[T, R](label: it.node2, weight: it.weight) )
 
   var outbounds = outFilt v1
@@ -315,6 +329,14 @@ proc deleteVertex*[T,R](graph: var Graph[T,R], vertex: Vertex[T,R]):
       e.node1 != vertex.label and e.node2 != vertex.label
     )
 
+    true
+  else:
+    false
+
+proc deleteEdge*[T, R](graph: var Graph[T,R], edge: Edge[T,R]): bool =
+  let pos = graph.edges.find(edge)
+  if pos >= 0:
+    graph.edges.delete(pos, pos)
     true
   else:
     false

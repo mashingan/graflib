@@ -17,5 +17,8 @@ Expansion will be planned when I have read/learn more about graph theory
 $ nimble install https://github.com/mashingan/graflib
 ```
 
+## doc
+[Documentation](https://mashingan.github.com/graflib/)
+
 ### License
 MIT

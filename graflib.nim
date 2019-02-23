@@ -61,7 +61,6 @@
 ## back to ``==`` operator.
 
 import sequtils, tables, deques, hashes
-from sugar import `=>`
 from algorithm import reverse
 
 type

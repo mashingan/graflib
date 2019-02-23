@@ -60,7 +60,9 @@
 ## *nil* value for *action* parameter for *paths* procedures will revert
 ## back to ``==`` operator.
 
-import sequtils
+import sequtils, tables, deques, hashes
+from sugar import `=>`
+from algorithm import reverse
 
 type
   Graph*[T, R] = object
@@ -105,6 +107,9 @@ proc `==`*(a, b: Edge): bool =
   result = a.node1 == b.node1 and
            a.node2 == b.node2 and
            a.weight == b.weight
+
+proc hash*(v: Vertex): Hash =
+  !$v.label.hash
 
 proc initEdge*[T, R](n1, n2: T, weight: R): Edge[T, R] =
   Edge[T, R](node1: n1, node2: n2, weight: weight)
@@ -279,12 +284,53 @@ proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R],
   withinTrail: echo "tempresult: ", tempresult
   result = tempresult.deduplicate
 
-proc shortestPath*(graph: Graph, v1, v2: Vertex): seq[Vertex] =
-  var paths = graph.paths(v1, v2)
-  result = paths[0]
-  for path in paths[1 .. ^1]:
-    if path.len < result.len:
-      result = path
+proc shortestPath*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R],
+    action: Action[T] = nil): seq[Vertex[T,R]] =
+  if v1 notin graph or v2 notin graph:
+    return @[]
+  var theAct: Action[T]
+  if action.isNil:
+    theAct = (proc(a, b: T): bool = a == b)
+  else:
+    theAct = action
+  let conn = if graph.isDirected: graph.edges
+             else: graph.edges.concat(graph.edges.map swapEdge)
+  var
+    visited = newseq[Vertex[T,R]]()
+    parent = newTable[Vertex[T,R], Vertex[T,R]]()
+    neighbor = initDeque[Vertex[T,R]]()
+    connected = false
+
+  template nextVisiting(x: untyped): untyped =
+    var next = conn.filterIt( theAct(it.node1, x.label) )
+                   .mapIt(initVertex(it.node2, it.weight))
+    for node in next:
+      if node notin parent: parent[node] = x
+    next
+  template addedToNeighbour(ns: seq[Vertex]) =
+    for n in ns: neighbor.addLast n
+
+  visited.add v1
+  v1.nextVisiting.addedToNeighbour
+  while neighbor.len > 0:
+    let n = neighbor.popFirst
+    if n in visited: continue
+    visited.add n
+    if n == v2:
+      connected = true
+      break
+    n.nextVisiting.addedToNeighbour
+
+  if not connected:
+    return @[]
+
+  var curr = visited[^1]
+  while curr != v1:
+    result.add curr
+    curr = parent[curr]
+  result.add curr
+  result.reverse
+
 
 proc adjacencyMatrix*[T, R](graph: Graph[T,R]): seq[seq[R]] =
   let

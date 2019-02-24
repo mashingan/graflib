@@ -61,7 +61,7 @@
 ## back to ``==`` operator.
 
 import sequtils, tables, deques, hashes
-from algorithm import reverse
+from algorithm import reverse, sorted
 
 type
   Graph*[T, R] = object
@@ -101,6 +101,10 @@ template withinTrail (body: typed): typed =
 
 proc `==`*(a, b: Vertex): bool =
   a.label == b.label
+
+proc `<`*(a, b: Vertex): bool =
+  if a.weight < b.weight: true
+  else: false
 
 proc `==`*(a, b: Edge): bool =
   result = a.node1 == b.node1 and
@@ -303,6 +307,7 @@ proc shortestPath*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R],
   template nextVisiting(x: untyped): untyped =
     var next = conn.filterIt( theAct(it.node1, x.label) )
                    .mapIt(initVertex(it.node2, it.weight))
+                   .sorted system.cmp
     for node in next:
       if node notin parent: parent[node] = x
     next

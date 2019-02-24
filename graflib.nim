@@ -61,7 +61,7 @@
 ## back to ``==`` operator.
 
 import sequtils, tables, deques, hashes
-from algorithm import reverse, sorted
+from algorithm import reverse, sort
 
 type
   Graph*[T, R] = object
@@ -246,8 +246,11 @@ proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R],
     tempresult = newSeq[seq[Vertex[T,R]]]()
 
   template outFilt (x: untyped): untyped =
-    edges.filterIt( theact(x.label, it.node1) )
-         .mapIt( Vertex[T, R](label: it.node2, weight: it.weight) )
+    var buff = newseq[Vertex[T,R]]()
+    for edge in edges:
+      if theact(x.label, edge.node1):
+        buff.add initVertex(edge.node2, edge.weight)
+    buff
 
   var outbounds = outFilt v1
   withinTrail: echo "current outbounds: ", outbounds
@@ -305,11 +308,13 @@ proc shortestPath*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R],
     connected = false
 
   template nextVisiting(x: untyped): untyped =
-    var next = conn.filterIt( theAct(it.node1, x.label) )
-                   .mapIt(initVertex(it.node2, it.weight))
-                   .sorted system.cmp
-    for node in next:
-      if node notin parent: parent[node] = x
+    var next = newseq[Vertex[T,R]]()
+    for edge in conn:
+      if theAct(x.label, edge.node1):
+        let node = initVertex(edge.node2, edge.weight)
+        next.add node
+        if node notin parent: parent[node] = x
+    algorithm.sort(next, system.cmp)
     next
   template addedToNeighbour(ns: seq[Vertex]) =
     for n in ns: neighbor.addLast n

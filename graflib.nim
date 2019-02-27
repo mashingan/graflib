@@ -55,10 +55,9 @@
 ##     doAssert(graph.degree(initVertex("origin1", 0)) == 3)
 ##     doAssert(graph.degree(initVertex("origin2", 0)) == 2)
 ##
-## When walking the connected graph, we can define our own **Action** type
-## that defaulted to *nil*.
-## *nil* value for *action* parameter for *paths* procedures will revert
-## back to ``==`` operator.
+## When walking the connected graph, we use defined `==`
+## for Vertex comparison. Hence if we use a specialized type
+## for Vertex label, we need to define `==` operator for our type.
 
 import sequtils, tables, deques, hashes
 from algorithm import reverse, sort
@@ -91,8 +90,6 @@ type
 
   GraphRef*[T, R] = ref Graph[T, R]
     ## Reference-type graph.
-
-  Action*[T] = proc(a, b: T): bool
 
 template withinTrail (body: typed): typed =
   when defined(trail):
@@ -229,16 +226,10 @@ proc swapEdge[T,R](edge:Edge[T,R]): Edge[T,R] =
   Edge[T,R](node1: edge.node2, node2: edge.node1, weight: edge.weight)
 
 
-proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R],
-    action: Action[T] = nil): seq[seq[Vertex[T,R]]] =
+proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R]):
+    seq[seq[Vertex[T,R]]] =
   if v1 notin graph.vertices or v2 notin graph.vertices:
     return @[]
-
-  var theact: Action[T]
-  if action.isNil:
-    theact = (proc(a, b: T): bool = a == b)
-  else:
-    theact = action
 
   var
     edges = if graph.isDirected: graph.edges
@@ -248,7 +239,7 @@ proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R],
   template outFilt (x: untyped): untyped =
     var buff = newseq[Vertex[T,R]]()
     for edge in edges:
-      if theact(x.label, edge.node1):
+      if x.label == edge.node1:
         buff.add initVertex(edge.node2, edge.weight)
     buff
 
@@ -290,15 +281,10 @@ proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R],
   withinTrail: echo "tempresult: ", tempresult
   result = tempresult.deduplicate
 
-proc shortestPath*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R],
-    action: Action[T] = nil): seq[Vertex[T,R]] =
+proc shortestPath*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R]):
+    seq[Vertex[T,R]] =
   if v1 notin graph or v2 notin graph:
     return @[]
-  var theAct: Action[T]
-  if action.isNil:
-    theAct = (proc(a, b: T): bool = a == b)
-  else:
-    theAct = action
   let conn = if graph.isDirected: graph.edges
              else: graph.edges.concat(graph.edges.map swapEdge)
   var
@@ -310,7 +296,7 @@ proc shortestPath*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R],
   template nextVisiting(x: untyped): untyped =
     var next = newseq[Vertex[T,R]]()
     for edge in conn:
-      if theAct(x.label, edge.node1):
+      if x.label == edge.node1:
         let node = initVertex(edge.node2, edge.weight)
         next.add node
         if node notin parent: parent[node] = x

@@ -226,10 +226,12 @@ proc swapEdge[T,R](edge:Edge[T,R]): Edge[T,R] =
   Edge[T,R](node1: edge.node2, node2: edge.node1, weight: edge.weight)
 
 
-proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R]):
-    seq[seq[Vertex[T,R]]] =
+#proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R]):
+    #seq[seq[Vertex[T,R]]] =
+iterator paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R]):
+    seq[Vertex[T,R]] =
   if v1 notin graph.vertices or v2 notin graph.vertices:
-    return @[]
+    yield @[]
 
   var
     edges = if graph.isDirected: graph.edges
@@ -254,7 +256,7 @@ proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R]):
     if v == goal:
       withinTrail: echo "return state: ", state
       tempresult.add state
-      state = state[0 .. ^2]
+      #state = state[0 .. ^2]
       return state
     var nextbound = outFilt(v)
     withinTrail: echo "current nextbound: ", nextbound
@@ -276,10 +278,11 @@ proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R]):
 
   for v in outbounds:
     var state = @[v1]
-    discard inpath(v2, v, state)
+    #discard inpath(v2, v, state)
+    yield inpath(v2, v, state)
 
-  withinTrail: echo "tempresult: ", tempresult
-  result = tempresult.deduplicate
+  #withinTrail: echo "tempresult: ", tempresult
+  #result = tempresult.deduplicate
 
 proc shortestPath*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R]):
     seq[Vertex[T,R]] =
@@ -440,8 +443,8 @@ when isMainModule:
     graph.neighbors(Vertex[char, int](label: 'c', weight: 0))
   echo if graph.isConnected: "graph is connected"
        else: "graph is disconnected"
-  echo graph.paths(Vertex[char,int](label:'g', weight:0),
-    Vertex[char,int](label:'d', weight:0))
+  echo toSeq(graph.paths(Vertex[char,int](label:'g', weight:0),
+    Vertex[char,int](label:'d', weight:0)))
   #echo graph.paths('a', 'd')
   echo "shortest path: ", graph.shortestPath(
     Vertex[char,int](label:'g', weight:0),

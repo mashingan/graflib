@@ -7,13 +7,13 @@
 ## *******
 ##
 ## A simple graph implementation library.
-## To scrutiny the trail when walking the graph, define ``withinTrail`` to
+## To scrutiny the trail when walking the graph, define ``trail`` to
 ## see in stdout the nodes visited.
 ## Compile it:
 ##
 ## ::
 ##
-##   $ nim c -d:withinTrail yourcodefile
+##   $ nim c -d:trail yourcodefile
 ##
 ## The current implementation walks into graph nodes to find the connection
 ## between origin node to destination node without consider the weight cost
@@ -60,7 +60,10 @@
 ## for Vertex label, we need to define `==` operator for our type.
 
 import sequtils, tables, deques, hashes
+from strutils import join
 from algorithm import reverse, sort
+import heapqueue
+from sugar import dump
 
 type
   Graph*[T, R] = object
@@ -287,6 +290,8 @@ proc shortestPath*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R]):
     return @[]
   let conn = if graph.isDirected: graph.edges
              else: graph.edges.concat(graph.edges.map swapEdge)
+  withinTrail:
+    dump conn
   var
     visited = newseq[Vertex[T,R]]()
     parent = newTable[Vertex[T,R], Vertex[T,R]]()
@@ -294,16 +299,16 @@ proc shortestPath*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R]):
     connected = false
 
   template nextVisiting(x: untyped): untyped =
-    var next = newseq[Vertex[T,R]]()
+    var next = initHeapQueue[Vertex[T,R]]()
     for edge in conn:
       if x.label == edge.node1:
-        let node = initVertex(edge.node2, edge.weight)
-        next.add node
+        let node = initVertex(edge.node2, x.weight + edge.weight)
+        next.push node
         if node notin parent: parent[node] = x
-    algorithm.sort(next, system.cmp)
+    withinTrail: dump next
     next
-  template addedToNeighbour(ns: seq[Vertex]) =
-    for n in ns: neighbor.addLast n
+  template addedToNeighbour(ns: HeapQueue[Vertex]) =
+    for i in 0 ..< ns.len: neighbor.addLast ns[i]
 
   visited.add v1
   v1.nextVisiting.addedToNeighbour
@@ -441,7 +446,7 @@ when isMainModule:
   echo if graph.isConnected: "graph is connected"
        else: "graph is disconnected"
   echo graph.paths(Vertex[char,int](label:'g', weight:0),
-    Vertex[char,int](label:'d', weight:0))
+    Vertex[char,int](label:'d', weight:0)).join("\n")
   #echo graph.paths('a', 'd')
   echo "shortest path: ", graph.shortestPath(
     Vertex[char,int](label:'g', weight:0),

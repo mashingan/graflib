@@ -7,13 +7,13 @@
 ## *******
 ##
 ## A simple graph implementation library.
-## To scrutiny the trail when walking the graph, define ``withinTrail`` to
+## To scrutiny the trail when walking the graph, define ``trail`` to
 ## see in stdout the nodes visited.
 ## Compile it:
 ##
 ## ::
 ##
-##   $ nim c -d:withinTrail yourcodefile
+##   $ nim c -d:trail yourcodefile
 ##
 ## The current implementation walks into graph nodes to find the connection
 ## between origin node to destination node without consider the weight cost
@@ -55,13 +55,15 @@
 ##     doAssert(graph.degree(initVertex("origin1", 0)) == 3)
 ##     doAssert(graph.degree(initVertex("origin2", 0)) == 2)
 ##
-## When walking the connected graph, we can define our own **Action** type
-## that defaulted to *nil*.
-## *nil* value for *action* parameter for *paths* procedures will revert
-## back to ``==`` operator.
+## When walking the connected graph, we use defined `==`
+## for Vertex comparison. Hence if we use a specialized type
+## for Vertex label, we need to define `==` operator for our type.
 
 import sequtils, tables, deques, hashes
-from algorithm import reverse, sorted
+from strutils import join
+from algorithm import reverse, sort
+import heapqueue
+from sugar import dump
 
 type
   Graph*[T, R] = object
@@ -91,8 +93,6 @@ type
 
   GraphRef*[T, R] = ref Graph[T, R]
     ## Reference-type graph.
-
-  Action*[T] = proc(a, b: T): bool
 
 template withinTrail (body: typed): typed =
   when defined(trail):
@@ -229,16 +229,10 @@ proc swapEdge[T,R](edge:Edge[T,R]): Edge[T,R] =
   Edge[T,R](node1: edge.node2, node2: edge.node1, weight: edge.weight)
 
 
-proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R],
-    action: Action[T] = nil): seq[seq[Vertex[T,R]]] =
+proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R]):
+    seq[seq[Vertex[T,R]]] =
   if v1 notin graph.vertices or v2 notin graph.vertices:
     return @[]
-
-  var theact: Action[T]
-  if action.isNil:
-    theact = (proc(a, b: T): bool = a == b)
-  else:
-    theact = action
 
   var
     edges = if graph.isDirected: graph.edges
@@ -246,8 +240,11 @@ proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R],
     tempresult = newSeq[seq[Vertex[T,R]]]()
 
   template outFilt (x: untyped): untyped =
-    edges.filterIt( theact(x.label, it.node1) )
-         .mapIt( Vertex[T, R](label: it.node2, weight: it.weight) )
+    var buff = newseq[Vertex[T,R]]()
+    for edge in edges:
+      if x.label == edge.node1:
+        buff.add initVertex(edge.node2, edge.weight)
+    buff
 
   var outbounds = outFilt v1
   withinTrail: echo "current outbounds: ", outbounds
@@ -287,17 +284,14 @@ proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R],
   withinTrail: echo "tempresult: ", tempresult
   result = tempresult.deduplicate
 
-proc shortestPath*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R],
-    action: Action[T] = nil): seq[Vertex[T,R]] =
+proc shortestPath*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R]):
+    seq[Vertex[T,R]] =
   if v1 notin graph or v2 notin graph:
     return @[]
-  var theAct: Action[T]
-  if action.isNil:
-    theAct = (proc(a, b: T): bool = a == b)
-  else:
-    theAct = action
   let conn = if graph.isDirected: graph.edges
              else: graph.edges.concat(graph.edges.map swapEdge)
+  withinTrail:
+    dump conn
   var
     visited = newseq[Vertex[T,R]]()
     parent = newTable[Vertex[T,R], Vertex[T,R]]()
@@ -305,14 +299,16 @@ proc shortestPath*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R],
     connected = false
 
   template nextVisiting(x: untyped): untyped =
-    var next = conn.filterIt( theAct(it.node1, x.label) )
-                   .mapIt(initVertex(it.node2, it.weight))
-                   .sorted system.cmp
-    for node in next:
-      if node notin parent: parent[node] = x
+    var next = initHeapQueue[Vertex[T,R]]()
+    for edge in conn:
+      if x.label == edge.node1:
+        let node = initVertex(edge.node2, x.weight + edge.weight)
+        next.push node
+        if node notin parent: parent[node] = x
+    withinTrail: dump next
     next
-  template addedToNeighbour(ns: seq[Vertex]) =
-    for n in ns: neighbor.addLast n
+  template addedToNeighbour(ns: HeapQueue[Vertex]) =
+    for i in 0 ..< ns.len: neighbor.addLast ns[i]
 
   visited.add v1
   v1.nextVisiting.addedToNeighbour
@@ -450,7 +446,7 @@ when isMainModule:
   echo if graph.isConnected: "graph is connected"
        else: "graph is disconnected"
   echo graph.paths(Vertex[char,int](label:'g', weight:0),
-    Vertex[char,int](label:'d', weight:0))
+    Vertex[char,int](label:'d', weight:0)).join("\n")
   #echo graph.paths('a', 'd')
   echo "shortest path: ", graph.shortestPath(
     Vertex[char,int](label:'g', weight:0),

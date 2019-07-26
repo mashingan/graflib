@@ -61,7 +61,7 @@
 
 import sequtils, tables, deques, hashes
 from strutils import join
-from algorithm import reverse, sort
+from algorithm import reverse
 import heapqueue
 from sugar import dump
 
@@ -305,7 +305,6 @@ proc shortestPath*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R]):
         let node = initVertex(edge.node2, x.weight + edge.weight)
         next.push node
         if node notin parent: parent[node] = x
-    withinTrail: dump next
     next
   template addedToNeighbour(ns: HeapQueue[Vertex]) =
     for i in 0 ..< ns.len: neighbor.addLast ns[i]
@@ -331,6 +330,8 @@ proc shortestPath*[T,R](graph: Graph[T,R], v1, v2: Vertex[T,R]):
   result.add curr
   result.reverse
 
+proc shortestPath*[T, R](graph: Graph[T,R], v1, v2: T): seq[Vertex[T,R]] =
+  graph.shortestPath(initVertex(v1, 0), initVertex(v2, 0))
 
 proc adjacencyMatrix*[T, R](graph: Graph[T,R]): seq[seq[R]] =
   let
@@ -451,6 +452,7 @@ when isMainModule:
   echo "shortest path: ", graph.shortestPath(
     Vertex[char,int](label:'g', weight:0),
     Vertex[char,int](label:'d', weight:0))
+  echo "shortest path2: ", graph.shortestPath('g', 'd')
   echo "adjacency matrix:"
   for adj in graph.adjacencyMatrix():
     echo adj

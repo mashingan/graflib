@@ -10,3 +10,5 @@ nimcache/
 *.un~
 
 *.exe
+
+*.html

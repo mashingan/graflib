@@ -94,7 +94,7 @@ type
   GraphRef*[T, R] = ref Graph[T, R]
     ## Reference-type graph.
 
-template withinTrail (body: typed): typed =
+template withinTrail (body: typed): untyped =
   when defined(trail):
     body
 
@@ -249,7 +249,7 @@ proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R]):
   var outbounds = outFilt v1
   withinTrail: echo "current outbounds: ", outbounds
 
-  proc inPath(goal, v: Vertex, state: var seq[Vertex]): seq[Vertex] =
+  proc inPath(goal, v: Vertex, state: var seq[Vertex]): bool =
     withinTrail:
       echo "visiting: ", v
       echo "current state: ", state
@@ -258,24 +258,21 @@ proc paths*[T,R](graph: Graph[T,R],v1, v2: Vertex[T,R]):
       withinTrail: echo "return state: ", state
       tempresult.add state
       state = state[0 .. ^2]
-      return state
+      return true
     var nextbound = outFilt(v)
     withinTrail: echo "current nextbound: ", nextbound
     if nextbound == @[]:
       withinTrail: echo "no nextbound"
-      return @[]
     var nextstate = newSeq[Vertex[T,R]]()
     for next in nextbound:
       withinTrail: echo "to visit next: ", next
       if next in state:
         withinTrail: echo next, " already in state"
         continue
-      nextstate = inPath(goal, next, state)
-      withinTrail: echo "nextstate: ", nextstate
-      if nextstate == @[]:
+      if not inPath(goal, next, state):
         state = state[0 .. ^2]
     withinTrail: echo "nextstate: ", nextstate
-    nextstate
+    false
 
   for v in outbounds:
     var state = @[v1]

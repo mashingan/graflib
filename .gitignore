@@ -3,6 +3,7 @@
 !*.*
 !/*
 
+!.github/*
 nimcache/
 
 # Vim backup file
@@ -10,3 +11,5 @@ nimcache/
 *.un~
 
 *.exe
+
+*.html

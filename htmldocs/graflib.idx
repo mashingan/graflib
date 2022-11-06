@@ -1,0 +1,38 @@
+Graflib	graflib.html#graflib	 Graflib	
+Example	graflib.html#graflib-example	  Example	
+Graph	graflib.html#Graph	graflib: Graph	
+Vertices	graflib.html#Vertices	graflib: Vertices	
+Vertex	graflib.html#Vertex	graflib: Vertex	
+Edge	graflib.html#Edge	graflib: Edge	
+GraphRef	graflib.html#GraphRef	graflib: GraphRef	
+`==`	graflib.html#==,Vertex,Vertex	graflib: `==`(a, b: Vertex): bool	
+`&lt;`	graflib.html#<,Vertex,Vertex	graflib: `&lt;`(a, b: Vertex): bool	
+`==`	graflib.html#==,Edge,Edge	graflib: `==`(a, b: Edge): bool	
+hash	graflib.html#hash,Vertex	graflib: hash(v: Vertex): Hash	
+initEdge	graflib.html#initEdge,T,T,R	graflib: initEdge[T, R](n1, n2: T; weight: R): Edge[T, R]	
+initVertex	graflib.html#initVertex,T,R	graflib: initVertex[T, R](label: T; weight: R): Vertex[T, R]	
+isDirected	graflib.html#isDirected,Graph	graflib: isDirected(graph: Graph): bool	
+isWeighted	graflib.html#isWeighted,Graph	graflib: isWeighted(graph: Graph): bool	
+contains	graflib.html#contains,Graph,Vertex	graflib: contains(graph: Graph; vertice: Vertex): bool	
+contains	graflib.html#contains,Graph[T,R],Edge[T,R]	graflib: contains[T, R](graph: Graph[T, R]; edge: Edge[T, R]): bool	
+addVertices	graflib.html#addVertices,Graph,varargs[Vertex[T,R]]	graflib: addVertices[T, R](graph: var Graph; vertices: varargs[Vertex[T, R]])	
+addEdges	graflib.html#addEdges,Graph,varargs[Edge[T,R]]	graflib: addEdges[T, R](graph: var Graph; edges: varargs[Edge[T, R]])	
+buildGraph	graflib.html#buildGraph,openArray[Vertex[T,R]],openArray[Edge[T,R]],bool,bool	graflib: buildGraph[T, R](vertices: openArray[Vertex[T, R]] = @[];\n                 edges: openArray[Edge[T, R]] = @[]; directed: bool = false;\n                 weighted: bool = false): Graph[T, R]	
+neighbors	graflib.html#neighbors,Graph,Vertex[T,R]	graflib: neighbors[T, R](graph: Graph; vertex: Vertex[T, R]): seq[Vertex[T, R]]	
+`$`	graflib.html#$,Graph	graflib: `$`(graph: Graph): string	
+`$`	graflib.html#$,Edge	graflib: `$`(edge: Edge): string	
+indegree	graflib.html#indegree,Graph,Vertex	graflib: indegree(graph: Graph; vertex: Vertex): int	
+outdegree	graflib.html#outdegree,Graph,Vertex	graflib: outdegree(graph: Graph; vertex: Vertex): int	
+degree	graflib.html#degree,Graph,Vertex	graflib: degree(graph: Graph; vertex: Vertex): int	
+buildDigraph	graflib.html#buildDigraph	graflib: buildDigraph[T, R](): Graph	
+newGraph	graflib.html#newGraph	graflib: newGraph[T, R](): GraphRef[T, R]	
+isConnected	graflib.html#isConnected,Graph[T,R]	graflib: isConnected[T, R](graph: Graph[T, R]): bool	
+paths	graflib.html#paths,Graph[T,R],Vertex[T,R],Vertex[T,R]	graflib: paths[T, R](graph: Graph[T, R]; v1, v2: Vertex[T, R]): seq[seq[Vertex[T, R]]]	
+shortestPath	graflib.html#shortestPath,Graph[T,R],Vertex[T,R],Vertex[T,R]	graflib: shortestPath[T, R](graph: Graph[T, R]; v1, v2: Vertex[T, R]): seq[Vertex[T, R]]	
+shortestPath	graflib.html#shortestPath,Graph[T,R],T,T	graflib: shortestPath[T, R](graph: Graph[T, R]; v1, v2: T): seq[Vertex[T, R]]	
+adjacencyMatrix	graflib.html#adjacencyMatrix,Graph[T,R]	graflib: adjacencyMatrix[T, R](graph: Graph[T, R]): seq[seq[R]]	
+incidenceMatrix	graflib.html#incidenceMatrix,Graph	graflib: incidenceMatrix(graph: Graph): seq[seq[int]]	
+deleteVertex	graflib.html#deleteVertex,Graph[T,R],Vertex[T,R]	graflib: deleteVertex[T, R](graph: var Graph[T, R]; vertex: Vertex[T, R]): bool	
+deleteEdge	graflib.html#deleteEdge,Graph[T,R],Edge[T,R]	graflib: deleteEdge[T, R](graph: var Graph[T, R]; edge: Edge[T, R]): bool	
+`&lt;`	graflib.html#<,PriorityNode[T,R],PriorityNode[T,R]	graflib: `&lt;`[T, R](p1, p2: PriorityNode[T, R]): bool	
+a*	graflib.html#a*,Graph[T,R],T,T	graflib: a*[T, R](graph: var Graph[T, R]; v1, v2: T): seq[Vertex[T, R]]	

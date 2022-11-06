@@ -368,7 +368,7 @@ proc deleteVertex*[T,R](graph: var Graph[T,R], vertex: Vertex[T,R]):
     bool =
   let pos = graph.vertices.find(vertex)
   if pos >= 0:
-    graph.vertices.delete(pos, pos)
+    graph.vertices.delete(pos)
     graph.edges.keepIf(proc(e: Edge[T,R]): bool =
       e.node1 != vertex.label and e.node2 != vertex.label
     )

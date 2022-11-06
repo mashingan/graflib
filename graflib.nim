@@ -385,6 +385,56 @@ proc deleteEdge*[T, R](graph: var Graph[T,R], edge: Edge[T,R]): bool =
   else:
     false
 
+type PriorityNode[T, R] = object
+  node: Vertex[T, R]
+  cost: R
+proc `<`*[T, R](p1, p2: PriorityNode[T, R]): bool = p1.cost < p2.cost
+
+proc `A*`*[T, R](graph: var Graph[T, R], v1, v2: T): seq[Vertex[T, R]] =
+  when not compiles(cost(v1, v2)):
+    {.error: "`proc cost[T, R](v1, v2: T): R` is not defined".}
+
+  when not compiles(distance(v1, v2)):
+    {.error: "`proc distance[T, R](v1, v2: Vertex[T, R]): R` is not defined".}
+
+  let
+    start = Vertex[T, R](label: v1)
+    goal = Vertex[T, R](label: v2)
+
+  var
+    costSoFar = initTable[Vertex[T, R], R]()
+    visited = initTable[Vertex[T, R], Vertex[T, R]]()
+    visiting = initHeapQueue[PriorityNode[T, R]]()
+    thecost: R
+
+  costSoFar[start] = thecost
+  visited[start] = start
+  visiting.push(PriorityNode[T, R](node: start, cost: thecost))
+  while visiting.len > 0:
+    let nextpriority = visiting.pop
+    let node = nextpriority.node
+    if node == goal: break
+    let nextvisit = graph.neighbors(node)
+    withinTrail:
+      echo "visiting: ", node
+    for nextnode in nextvisit:
+      thecost = costSoFar[node] + node.label.cost(nextnode.label)
+      if nextnode notin costSoFar or thecost < costSoFar[nextnode]:
+        costSoFar[nextnode] = thecost
+        let priority = thecost + nextnode.label.distance(goal.label)
+        visiting.push(PriorityNode[T, R](node: nextnode, cost: priority))
+        visited[nextnode] = node
+        withinTrail:
+          echo "added to queue with priority: ", priority
+
+  var current = goal
+  while true:
+    result.add current
+    if current == start: break
+    if current notin visited: return @[]
+    current = visited[current]
+
+  result.reverse
 
 when isMainModule:
   var graph = buildGraph[char, int]()

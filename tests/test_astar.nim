@@ -1,4 +1,4 @@
-import std/unittest
+import std/[unittest, hashes]
 import graflib
 
 type Coord = object
@@ -7,6 +7,13 @@ type Coord = object
 func distance(c1, c2: Coord): int =
   abs(c1.x - c2.x) + abs(c1.y - c2.y)
 func cost(c1, c2: Coord): int = c2.weight
+
+proc hash(c: Coord): Hash =
+  var h: Hash = 0
+  h = h !& hash(c.x)
+  h = h !& hash(c.y)
+  h = h !& hash(c.weight)
+  result = !$h
 
 test "A* search":
   let mapgraph = @[
@@ -31,7 +38,6 @@ test "A* search":
     mapnum[i] = lineseq
 
   for y in mapnum.low .. mapnum.high:
-    let rowlen = mapnum[y].len
     for x in mapnum[y].low .. mapnum[y].high:
       let c = Coord(x: x+1, y: y+1, weight: mapnum[y][x])
       let v = Vertex[Coord, int](label: c)
@@ -63,7 +69,7 @@ test "A* search":
   let
     start = Coord(x: 1, y: 1, weight: mapnum[0][0])
     goal = Coord(x: 10, y: 10, weight: mapnum[9][9])
-    newgraphAstarPath = thenewgraph.`A*`(start, goal)
+    newgraphAstarPath = thenewgraph.`a*`(start, goal)
   var totalcount = 0
   for node in newgraphAstarPath[1..^1]:
     totalcount += node.label.weight

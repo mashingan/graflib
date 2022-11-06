@@ -18,7 +18,7 @@ $ nimble install https://github.com/mashingan/graflib
 ```
 
 ## doc
-[Documentation](https://mashingan.github.io/graflib/)
+[Documentation](https://mashingan.github.io/graflib/htmldocs/graflib.html)
 
 ### License
 MIT

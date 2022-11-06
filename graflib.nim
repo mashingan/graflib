@@ -396,7 +396,9 @@ proc `a*`*[T, R](graph: var Graph[T, R], v1, v2: T): seq[Vertex[T, R]] =
   ## `proc distance(v1, v2: T): R` with T and R are matched with Graph[T, R].
   ## In rare case users could also need to provide operator "+" and "<" for T
   ## that returns R viz ```proc `+`(cost1, cost2: R): R``` and
-  ## ```proc `<`(cost1, cost2: R): bool```.
+  ## ```proc `<`(cost1, cost2: R): bool```. Additional users could be needed
+  ## to provide the hash proc for T, i.e `proc hash(t: T): Hash`. Check the
+  ## std/hashes on how to do it.
   when not compiles(cost(v1, v2)):
     {.error: "`proc cost[T, R](v1, v2: T): R` is not defined".}
 

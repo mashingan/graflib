@@ -504,6 +504,10 @@ when isMainModule:
   for adj in graph.adjacencyMatrix():
     echo adj
 
+  func cost(v1, v2: char): int = 1
+  func distance(v1, v2: char): int = 0
+
+  echo "A*: ", graph.`A*`('g', 'd')
   let g = Vertex[char,int](label:'g', weight:0)
   if graph.deleteVertex(g):
     echo "Vertex ", g, " is deleted"

@@ -390,12 +390,18 @@ type PriorityNode[T, R] = object
   cost: R
 proc `<`*[T, R](p1, p2: PriorityNode[T, R]): bool = p1.cost < p2.cost
 
-proc `A*`*[T, R](graph: var Graph[T, R], v1, v2: T): seq[Vertex[T, R]] =
+proc `a*`*[T, R](graph: var Graph[T, R], v1, v2: T): seq[Vertex[T, R]] =
+  ## A* search based on its start (v1) label (v2) to end.
+  ## Users need to provide accessible `proc cost(v1, v2: T): R` and
+  ## `proc distance(v1, v2: T): R` with T and R are matched with Graph[T, R].
+  ## In rare case users could also need to provide operator "+" and "<" for T
+  ## that returns R viz ```proc `+`(cost1, cost2: R): R``` and
+  ## ```proc `<`(cost1, cost2: R): bool```.
   when not compiles(cost(v1, v2)):
     {.error: "`proc cost[T, R](v1, v2: T): R` is not defined".}
 
   when not compiles(distance(v1, v2)):
-    {.error: "`proc distance[T, R](v1, v2: Vertex[T, R]): R` is not defined".}
+    {.error: "`proc distance[T, R](v1, v2: T): R` is not defined".}
 
   let
     start = Vertex[T, R](label: v1)
@@ -507,12 +513,11 @@ when isMainModule:
   func cost(v1, v2: char): int = 1
   func distance(v1, v2: char): int = 0
 
-  echo "A*: ", graph.`A*`('g', 'd')
+  echo "A*: ", graph.`a*`('g', 'd')
   let g = Vertex[char,int](label:'g', weight:0)
   if graph.deleteVertex(g):
     echo "Vertex ", g, " is deleted"
     echo "now graph is ", graph
-
 
   #[
   var gr = buildGraph[int]()

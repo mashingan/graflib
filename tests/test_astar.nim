@@ -1,6 +1,15 @@
 import std/[unittest, hashes]
 import graflib
 
+## This test is also example of how to search using A* method.
+## This example is adapted and solved from Advent of Code 2021 Day 15.
+## Ref: https://adventofcode.com/2021/day/15
+## This example only takes the input example in the page hence the
+## mapgraph' lines is already lined in seq[string] but the method
+## to solve is still same. Hint: use
+## [io.readLines](https://nim-lang.org/docs/io.html#readLines,string,Natural)
+## to read from `stdin` file.
+
 type Coord = object
   x, y, weight: int
 
@@ -29,7 +38,7 @@ test "A* search":
     "2311944581",
   ]
 
-  var thenewgraph = buildGraph[Coord, int]()
+  var thenewgraph = buildGraph[Coord]()
   var mapnum = newseq[seq[int]](mapgraph.len)
   for i, line in mapgraph:
     var lineseq = newseq[int](line.len)
@@ -40,36 +49,31 @@ test "A* search":
   for y in mapnum.low .. mapnum.high:
     for x in mapnum[y].low .. mapnum[y].high:
       let c = Coord(x: x+1, y: y+1, weight: mapnum[y][x])
-      let v = Vertex[Coord, int](label: c)
-      thenewgraph.addVertices v
+      thenewgraph.addVertices c
       if x-1 >= mapnum[y].low:
         let c1 = Coord(x: x, y: y+1, weight: mapnum[y][x-1])
-        let v1 = Vertex[Coord, int](label: c1) 
-        thenewgraph.addVertices v1
-        thenewgraph.addEdges Edge[Coord, int](node1: c, node2: c1)
+        thenewgraph.addVertices c1
+        thenewgraph.addEdges Edge[Coord](node1: c, node2: c1)
 
       if x+1 <= mapnum[y].high:
         let c1 = Coord(x: x+2, y: y+1, weight: mapnum[y][x+1])
-        let v1 = Vertex[Coord, int](label: c1) 
-        thenewgraph.addVertices v1
-        thenewgraph.addEdges Edge[Coord, int](node1: c, node2: c1)
+        thenewgraph.addVertices c1
+        thenewgraph.addEdges Edge[Coord](node1: c, node2: c1)
 
       if y-1 >= mapnum.low:
         let c1 = Coord(x: x+1, y: y, weight: mapnum[y-1][x])
-        let v1 = Vertex[Coord, int](label: c1) 
-        thenewgraph.addVertices v1
-        thenewgraph.addEdges Edge[Coord, int](node1: c, node2: c1)
+        thenewgraph.addVertices c1
+        thenewgraph.addEdges Edge[Coord](node1: c, node2: c1)
 
       if y+1 <= mapnum.high:
         let c1 = Coord(x: x+1, y: y+2, weight: mapnum[y+1][x])
-        let v1 = Vertex[Coord, int](label: c1) 
-        thenewgraph.addVertices v1
-        thenewgraph.addEdges Edge[Coord, int](node1: c, node2: c1)
+        thenewgraph.addVertices c1
+        thenewgraph.addEdges Edge[Coord](node1: c, node2: c1)
 
   let
     start = Coord(x: 1, y: 1, weight: mapnum[0][0])
     goal = Coord(x: 10, y: 10, weight: mapnum[9][9])
-    newgraphAstarPath = thenewgraph.`a*`(start, goal)
+    newgraphAstarPath = `a*`[Coord, int](thenewgraph, start, goal)
   var totalcount = 0
   for node in newgraphAstarPath[1..^1]:
     totalcount += node.label.weight

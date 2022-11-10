@@ -59,10 +59,8 @@
 ## for Vertex comparison. Hence if we use a specialized type
 ## for Vertex label, we need to define `==` operator for our type.
 
-import sequtils, tables, deques, hashes
-from strutils import join
+import sequtils, tables, deques
 from algorithm import reverse
-from std/strformat import fmt
 import heapqueue
 from sugar import dump
 
@@ -406,6 +404,8 @@ proc `a*`*[T, C](graph: var Graph[T], start, goal: T): seq[Vertex[T]] =
   result.reverse
 
 when isMainModule:
+  from strutils import join
+  from std/strformat import fmt
   var graph = buildGraph[char]()
   #[
   graph.vertices = @['a', 'b', 'c', 'd', 'e']

@@ -5,11 +5,19 @@ Hopefully this can be expanded to more generic graph implementation.
 
 The current implementation is able to
 
-1. Make graph, directed and undirected together with its weight.
+1. Make graph undirected.
 2. Find nodes' neighbours within defined mapping.
 3. Find the paths between origin node to destination node using DFS.
+4. Find the shortest path between origin node to destination node using `A*`.
 
-Expansion will be planned when I have read/learn more about graph theory
+## Note for A* searching
+
+User must provide the proc that has signature
+`proc cost[N, C](n1, n2: N): C` and `proc distance[N, C](n1, n2: N): C`
+with `N` is the node type and `C` is the cost type.
+The cost type has to support `<` and `+` operator to make `A*` search to work.  
+See the [tests/test_astar.nim](tests/test_astar.nim) for the example
+to see how it works.
 
 ## Installation
 

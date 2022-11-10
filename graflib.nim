@@ -58,6 +58,9 @@
 ## When walking the connected graph, we use defined `==`
 ## for Vertex comparison. Hence if we use a specialized type
 ## for Vertex label, we need to define `==` operator for our type.
+## 
+## With additional A* search (proc `a*`), users must provide additional
+## procs to make it works. Read the `a*` proc documentation for the detail.
 
 import sequtils, tables, deques
 from algorithm import reverse

@@ -1,6 +1,15 @@
 import std/[unittest, hashes]
 import graflib
 
+## This test is also example of how to search using A* method.
+## This example is adapted and solved from Advent of Code 2021 Day 15.
+## Ref: https://adventofcode.com/2021/day/15
+## This example only takes the input example in the page hence the
+## mapgraph' lines is already lined in seq[string] but the method
+## to solve is still same. Hint: use
+## [io.readLines](https://nim-lang.org/docs/io.html#readLines,string,Natural)
+## to read from `stdin` file.
+
 type Coord = object
   x, y, weight: int
 

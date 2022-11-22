@@ -1,5 +1,4 @@
 import std/unittest
-from std/sugar import dump, collect
 from std/strutils import splitLines, split, isUpperAscii
 from std/sequtils import all
 
@@ -55,14 +54,15 @@ start-RW
 """,
 ]
 
-let graphs = collect:
-    for input in inputs:
-        var g = buildGraph[string]()
+let graphs = block:
+    var r = newseq[Graph[string]](inputs.len)
+    for i, input in inputs:
+        r[i] = buildGraph[string]()
         for line in input.splitLines:
             let nodes = line.split("-", maxsplit = 2)
             if nodes.len >= 2:
-                g.addEdges(Edge[string](node1: nodes[0], node2: nodes[1]))
-        g
+                r[i].addEdges(Edge[string](node1: nodes[0], node2: nodes[1]))
+    r
 
 func isCycle(s: string): bool = s.all isUpperAscii
 

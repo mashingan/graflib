@@ -141,6 +141,10 @@ proc addEdges*[T] (graph: var Graph, edges: varargs[Edge[T]]) =
         swappedEdge notin graph.edges:
       graph.edges.add edge
 
+proc addEdges*[T](graph: var Graph, edges: varargs[(T, T)]) =
+  for edge in edges:
+    graph.addEdges Edge[T](node1: edge[0], node2: edge[1])
+
 proc buildGraph*[T](vertices: openArray[Vertex[T]] = @[],
     edges: openArray[Edge[T]] = @[],
     directed: bool = false, weighted: bool = false): Graph[T] =

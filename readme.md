@@ -23,11 +23,11 @@ to see how it works.
 
 ## Installation
 
-Minimum supported Nim version `1.6.0` in order to run the test.
-
 ```
 $ nimble install https://github.com/mashingan/graflib
 ```
+
+Minimum supported Nim version `1.2.0` in order to run the test.
 
 ## doc
 [Documentation](https://mashingan.github.io/graflib/htmldocs/graflib.html)

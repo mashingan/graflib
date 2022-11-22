@@ -74,9 +74,9 @@ proc next(j: Waterjugs, edges: seq[Edge[Waterjugs]]): seq[Waterjugs] =
     result.add Waterjugs(jug3: j.jug3, jug5: 0)
   
   # full jug
-  if j.jug3 == Jug3.low:
+  if j.jug3 < Jug3.high:
     result.add Waterjugs(jug3: Jug3.high, jug5: j.jug5)
-  if j.jug5 == Jug5.low:
+  if j.jug5 < Jug5.high:
     result.add Waterjugs(jug3: j.jug3, jug5: Jug5.high)
   
   # pour jug 3 to jug 5

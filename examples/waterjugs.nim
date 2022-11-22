@@ -57,7 +57,9 @@ for i in Jug3.low+1 .. Jug3.high:
     let toPour = min(abs(Jug5.high - j), i)
     let edge = Edge[Waterjugs](
       node1: Waterjugs(jug3: i, jug5: j),
-      node2: Waterjugs(jug3: max(0, i - toPour), jug5: min(5, j + toPour))
+      node2: Waterjugs(
+        jug3: max(Jug3.low, i - toPour),
+        jug5: min(Jug5.high, j + toPour))
     )
     graf.addEdges edge
 
@@ -67,7 +69,9 @@ for i in Jug3.low .. Jug3.high-1:
     let toPour = min(abs(Jug3.high - i), j)
     let edge = Edge[Waterjugs](
       node1: Waterjugs(jug3: i, jug5: j),
-      node2: Waterjugs(jug3: max(2, i + toPour), jug5: min(5, j - toPour))
+      node2: Waterjugs(
+        jug3: max(Jug3.high, i + toPour),
+        jug5: min(Jug5.high, j - toPour))
     )
     graf.addEdges edge
 

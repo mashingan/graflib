@@ -1,4 +1,4 @@
-import std/[unittest]
+import std/[unittest, hashes]
 import graflib
 
 ## This test is also example of how to search using A* method.
@@ -16,6 +16,13 @@ type Coord = object
 func distance(c1, c2: Coord): int =
   abs(c1.x - c2.x) + abs(c1.y - c2.y)
 func cost(c1, c2: Coord): int = c2.weight
+
+proc hash(c: Coord): Hash =
+  var h: Hash = 0
+  h = h !& hash(c.x)
+  h = h !& hash(c.y)
+  h = h !& hash(c.weight)
+  result = !$h
 
 test "A* search":
   let mapgraph = @[

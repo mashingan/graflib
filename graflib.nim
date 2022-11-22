@@ -41,7 +41,7 @@
 ##       ("origin1", "destination1"),
 ##       ("origin2", "destination2"),
 ##       ("origin1", "destination2"),
-##       ("origin1", "origin2", 0)
+##       ("origin1", "origin2")
 ##     ].mapIt( initEdge(it[0], it[1]) )
 ##     doAssert(graph.edges.len == 4)
 ##     doAssert(graph.vertices.len == 4)
@@ -69,8 +69,7 @@ from sugar import dump
 
 type
   Graph*[T] = object
-    ## Graph type that implemented generically using ``T`` type as label
-    ## and ``R`` as weight type.
+    ## Graph type that implemented generically using ``T`` type as the node.
     directed*: bool         ## If true, every edge has only a direction
                             ## for each time its defined.
     vertices*: seq[T]    ## Vertices or nodes
@@ -215,25 +214,28 @@ proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
   ## By defining the `func isCycle(node: N): bool` we can make a rule that
   ## it can visit more than once for a node. By default it's not defined
   ## and defaulting to false, or in other word, not cycled.
-  if v1 notin graph.vertices or v2 notin graph.vertices:
-    return @[]
+  ## 
+  ## Users can provide custom next nodes by defining
+  ## `proc next(node: N, edges: seq[Edge[N]]): seq[N]`
+  ## for their particular purpose. The arg `edges` is the current edges
+  ## that graph has. It's supplied when users want to use it but in most
+  ## cases they can ignore it.
+  # if v1 notin graph.vertices or v2 notin graph.vertices:
+  #   return @[]
+
+  template outnodes(v: T): untyped =
+    when compiles(v.next(graph.edges)):
+      v.next(graph.edges)
+    else:
+      graph.neighbors(v)
 
   var
-    edges = if graph.isDirected: graph.edges
-            else: graph.edges.concat(graph.edges.map swapEdge)
     tempresult = newSeq[seq[Vertex[T]]]()
-
-  template outFilt (x: untyped): untyped =
-    var buff = newseq[Vertex[T]]()
-    for edge in edges:
-      if x.label == edge.node1:
-        buff.add edge.node2
-    buff
-
-  var outbounds = outFilt v1
+    outbounds = outnodes v1
   withinTrail: echo "current outbounds: ", outbounds
 
-  proc inPath(goal, v: Vertex, state: var seq[Vertex]): bool =
+
+  proc inPath(goal, v: Vertex[T], state: var seq[Vertex[T]]): bool =
     withinTrail:
       echo "visiting: ", v
       echo "current state: ", state
@@ -243,7 +245,7 @@ proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
       tempresult.add state
       state = state[0 .. ^2]
       return true
-    var nextbound = outFilt(v)
+    var nextbound = outnodes v
     withinTrail: echo "current nextbound: ", nextbound
     if nextbound == @[]:
       withinTrail: echo "no nextbound"
@@ -269,8 +271,8 @@ proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
   withinTrail: echo "tempresult: ", tempresult
   result = tempresult.deduplicate
 
-proc shortestPath*[T](graph: Graph[T], v1, v2: T):
-    seq[Vertex[T]] =
+proc shortestPath*[T](graph: Graph[T], v1, v2: T): seq[Vertex[T]]
+  {.deprecated: "Use `a*` proc for better customized search".} =
   if v1 notin graph or v2 notin graph:
     return @[]
   let conn = if graph.isDirected: graph.edges
@@ -386,6 +388,12 @@ proc `a*`*[T, C](graph: var Graph[T], start, goal: T): seq[Vertex[T]] =
   ## Additionally users could be needed to provide the hash proc for T,
   ## i.e `proc hash(t: T): Hash`. Check the std/hashes on how to do it.
 
+  template outnodes(v: T): untyped =
+    when compiles(v.next(graph.edges)):
+      v.next(graph.edges)
+    else:
+      graph.neighbors(v)
+
   var
     costSoFar = initTable[T, C]()
     visited = initTable[T, T]()
@@ -399,7 +407,7 @@ proc `a*`*[T, C](graph: var Graph[T], start, goal: T): seq[Vertex[T]] =
     let nextpriority = visiting.pop
     let node = nextpriority.node
     if node == goal: break
-    let nextvisit = graph.neighbors(node)
+    let nextvisit = node.outnodes
     withinTrail:
       echo "visiting: ", node
     for nextnode in nextvisit:

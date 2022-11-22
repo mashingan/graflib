@@ -400,7 +400,7 @@ class="link-seesrc" target="_blank">Source</a>
 <dt><pre><span class="Keyword">proc</span> <a href="#%3C%2CPriorityNode%5BT%2CC%5D%2CPriorityNode%5BT%2CC%5D"><span class="Identifier">`&lt;`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">C</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">p1</span><span class="Other">,</span> <span class="Identifier">p2</span><span class="Other">:</span> <span class="Identifier">PriorityNode</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">C</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
 <dd>
 
-
+Internal function. Won't be usable because the PriorityNode itself is private. Added to support priority queue that requires this operator visible in the priority queue module.
 &nbsp;&nbsp;<a
 href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L362"
 class="link-seesrc" target="_blank">Source</a>
@@ -428,9 +428,9 @@ class="link-seesrc" target="_blank">Source</a>
 <p><pre class="listing"><span class="Keyword">proc</span> <span class="Punctuation">`</span><span class="Operator">&lt;</span><span class="Punctuation">`</span><span class="Punctuation">(</span><span class="Identifier">cost1</span><span class="Punctuation">,</span> <span class="Identifier">cost2</span><span class="Punctuation">:</span> <span class="Identifier">R</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span></pre>. Additionally users could be needed to provide the hash proc for T, i.e <tt class="docutils literal"><span class="pre"><span class="Keyword">proc</span> <span class="Identifier">hash</span><span class="Punctuation">(</span><span class="Identifier">t</span><span class="Punctuation">:</span> <span class="Identifier">T</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">Hash</span></span></tt>. Check the std/hashes on how to do it.</p>
 
 &nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L364"
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L367"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L364" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L367" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -715,7 +715,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-11-10 19:01:53 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-11-22 01:22:03 UTC</small>
       </div>
     </div>
   </div>

@@ -10,6 +10,8 @@ The current implementation is able to
 3. Find the paths between origin node to destination node using DFS.
 4. Find the shortest path between origin node to destination node using `A*`.
 
+Available examples are provided in folder [examples](./examples).
+
 ## Note for A* searching
 
 User must provide the proc that has signature

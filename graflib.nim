@@ -207,6 +207,14 @@ proc swapEdge[T](edge:Edge[T]): Edge[T] =
 
 proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
     seq[seq[Vertex[T]]] =
+  ## Paths is searching for all availables path from v1 to v2.
+  ## By default searching for paths is not cycled, e.g. we have edges,
+  ## `a->b`, `b->c`, `c->d`, `a->c`, `a->d`, `c->b`
+  ## when we searched `a-b-c` and `c` has path to `b`, since it's not cycled
+  ## `c` cannot visit `b` once more because it's has been visited.
+  ## By defining the `func isCycle(node: N): bool` we can make a rule that
+  ## it can visit more than once for a node. By default it's not defined
+  ## and defaulting to false, or in other word, not cycled.
   if v1 notin graph.vertices or v2 notin graph.vertices:
     return @[]
 
@@ -242,7 +250,11 @@ proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
     var nextstate = newSeq[Vertex[T]]()
     for next in nextbound:
       withinTrail: echo "to visit next: ", next
-      if next in state:
+      when compiles(next.isCycle):
+        let cycled = next.isCycle
+      else:
+        let cycled = false
+      if next in state and not cycled:
         withinTrail: echo next, " already in state"
         continue
       if not inPath(goal, next, state):

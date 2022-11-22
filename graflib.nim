@@ -41,7 +41,7 @@
 ##       ("origin1", "destination1"),
 ##       ("origin2", "destination2"),
 ##       ("origin1", "destination2"),
-##       ("origin1", "origin2", 0)
+##       ("origin1", "origin2")
 ##     ].mapIt( initEdge(it[0], it[1]) )
 ##     doAssert(graph.edges.len == 4)
 ##     doAssert(graph.vertices.len == 4)
@@ -69,8 +69,7 @@ from sugar import dump
 
 type
   Graph*[T] = object
-    ## Graph type that implemented generically using ``T`` type as label
-    ## and ``R`` as weight type.
+    ## Graph type that implemented generically using ``T`` type as the node.
     directed*: bool         ## If true, every edge has only a direction
                             ## for each time its defined.
     vertices*: seq[T]    ## Vertices or nodes
@@ -221,8 +220,8 @@ proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
   ## for their particular purpose. The arg `edges` is the current edges
   ## that graph has. It's supplied when users want to use it but in most
   ## cases they can ignore it.
-  if v1 notin graph.vertices or v2 notin graph.vertices:
-    return @[]
+  # if v1 notin graph.vertices or v2 notin graph.vertices:
+  #   return @[]
 
   template outnodes(v: T): untyped =
     when compiles(v.next(graph.edges)):
@@ -272,8 +271,8 @@ proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
   withinTrail: echo "tempresult: ", tempresult
   result = tempresult.deduplicate
 
-proc shortestPath*[T](graph: Graph[T], v1, v2: T):
-    seq[Vertex[T]] =
+proc shortestPath*[T](graph: Graph[T], v1, v2: T): seq[Vertex[T]]
+  {.deprecated: "Use `a*` proc for better customized search".} =
   if v1 notin graph or v2 notin graph:
     return @[]
   let conn = if graph.isDirected: graph.edges

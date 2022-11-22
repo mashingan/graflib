@@ -389,6 +389,12 @@ proc `a*`*[T, C](graph: var Graph[T], start, goal: T): seq[Vertex[T]] =
   ## Additionally users could be needed to provide the hash proc for T,
   ## i.e `proc hash(t: T): Hash`. Check the std/hashes on how to do it.
 
+  template outnodes(v: T): untyped =
+    when compiles(v.next(graph.edges)):
+      v.next(graph.edges)
+    else:
+      graph.neighbors(v)
+
   var
     costSoFar = initTable[T, C]()
     visited = initTable[T, T]()
@@ -402,7 +408,7 @@ proc `a*`*[T, C](graph: var Graph[T], start, goal: T): seq[Vertex[T]] =
     let nextpriority = visiting.pop
     let node = nextpriority.node
     if node == goal: break
-    let nextvisit = graph.neighbors(node)
+    let nextvisit = node.outnodes
     withinTrail:
       echo "visiting: ", node
     for nextnode in nextvisit:

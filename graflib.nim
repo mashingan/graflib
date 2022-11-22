@@ -263,13 +263,9 @@ proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
   # if v1 notin graph.vertices or v2 notin graph.vertices:
   #   return @[]
 
-  var tempresult = newSeq[seq[Vertex[T]]]()
-
   var state = newseq[T]()
-  discard graph.inpath(v2, v1, state, tempresult)
-
-  withinTrail: echo "tempresult: ", tempresult
-  result = tempresult.deduplicate
+  discard graph.inpath(v2, v1, state, result)
+  withinTrail: echo "final result: ", result
 
 proc shortestPath*[T](graph: Graph[T], v1, v2: T): seq[Vertex[T]]
   {.deprecated: "Use `a*` proc for better customized search".} =

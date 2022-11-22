@@ -23,6 +23,8 @@ to see how it works.
 
 ## Installation
 
+Minimum supported Nim version `1.6.0` in order to run the test.
+
 ```
 $ nimble install https://github.com/mashingan/graflib
 ```

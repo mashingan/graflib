@@ -215,25 +215,28 @@ proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
   ## By defining the `func isCycle(node: N): bool` we can make a rule that
   ## it can visit more than once for a node. By default it's not defined
   ## and defaulting to false, or in other word, not cycled.
+  ## 
+  ## Users can provide custom next nodes by defining
+  ## `proc next(node: N, edges: seq[Edge[N]]): seq[N]`
+  ## for their particular purpose. The arg `edges` is the current edges
+  ## that graph has. It's supplied when users want to use it but in most
+  ## cases they can ignore it.
   if v1 notin graph.vertices or v2 notin graph.vertices:
     return @[]
 
+  template outnodes(v: T): untyped =
+    when compiles(v.next(graph.edges)):
+      v.next(graph.edges)
+    else:
+      graph.neighbors(v)
+
   var
-    edges = if graph.isDirected: graph.edges
-            else: graph.edges.concat(graph.edges.map swapEdge)
     tempresult = newSeq[seq[Vertex[T]]]()
-
-  template outFilt (x: untyped): untyped =
-    var buff = newseq[Vertex[T]]()
-    for edge in edges:
-      if x.label == edge.node1:
-        buff.add edge.node2
-    buff
-
-  var outbounds = outFilt v1
+    outbounds = outnodes v1
   withinTrail: echo "current outbounds: ", outbounds
 
-  proc inPath(goal, v: Vertex, state: var seq[Vertex]): bool =
+
+  proc inPath(goal, v: Vertex[T], state: var seq[Vertex[T]]): bool =
     withinTrail:
       echo "visiting: ", v
       echo "current state: ", state
@@ -243,7 +246,7 @@ proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
       tempresult.add state
       state = state[0 .. ^2]
       return true
-    var nextbound = outFilt(v)
+    var nextbound = outnodes v
     withinTrail: echo "current nextbound: ", nextbound
     if nextbound == @[]:
       withinTrail: echo "no nextbound"

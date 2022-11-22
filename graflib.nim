@@ -165,7 +165,7 @@ proc neighbors*[T](graph: Graph[T], vertex: T): seq[T] =
       v2 = edge.node2
     if vertex.label == edge.node1 and v2 notin result:
       result.add v2
-    elif vertex.label == edge.node2 and v1 notin result:
+    elif not graph.directed and vertex.label == edge.node2 and v1 notin result:
       result.add v1
 
 proc `$`*[T](graph: Graph[T]): string =
@@ -360,6 +360,9 @@ type PriorityNode[T, C] = object
   cost: C
 
 proc `<`*[T, C](p1, p2: PriorityNode[T, C]): bool = p1.cost < p2.cost
+  ## Internal function. Won't be usable because the PriorityNode itself is
+  ## private. Added to support priority queue that requires this operator
+  ## visible in the priority queue module.
 
 proc `a*`*[T, C](graph: var Graph[T], start, goal: T): seq[Vertex[T]] =
   ## A* search based on its start (v1) label (v2) to end.
@@ -476,5 +479,4 @@ when isMainModule:
   let g = 'g'
   if graph.deleteVertex(g):
     echo "Vertex ", g, " is deleted"
-    #echo "now graph is ", graph
     echo fmt"now graph is {graph}"

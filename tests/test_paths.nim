@@ -61,7 +61,7 @@ let graphs = block:
         for line in input.splitLines:
             let nodes = line.split("-", maxsplit = 2)
             if nodes.len >= 2:
-                r[i].addEdges((nodes[0], nodes[1]))
+                r[i].addEdges (nodes[0], nodes[1])
     r
 
 func isCycle(s: string): bool = s.all isUpperAscii

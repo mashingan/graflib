@@ -15,12 +15,15 @@
 import std/[sugar, strformat]
 import graflib
 
+const
+  cap1 {.intdefine.}: int = 3
+  cap2 {.intdefine.}: int = 5
+  targetcap {.intdefine.} = 4
+
 type
-  Jug3 = range[0..3]
-  Jug5 = range[0..5]
-  Waterjugs = object
-    jug3: Jug3
-    jug5: Jug5
+  FirstJug = range[0..cap1]
+  SecondJug = range[0..cap2]
+  Waterjugs = (FirstJug, SecondJug)
 
 func distance(w1, w2: Waterjugs): int = 0
 func cost(w1, w2: Waterjugs): int = 0
@@ -28,55 +31,47 @@ func cost(w1, w2: Waterjugs): int = 0
 var graf = buildGraph[Waterjugs](directed = true)
 
 # emtpy glass
-for i in Jug3.low .. Jug3.high:
-  for j in Jug5.low .. Jug5.high:
-    if i > Jug3.low:
-      graf.addEdges(Edge[Waterjugs](
-        node1: Waterjugs(jug3: i, jug5: j),
-        node2: Waterjugs(jug3: Jug3.low, jug5: j)))
-    if j > Jug5.low:
-      graf.addEdges(Edge[Waterjugs](
-        node1: Waterjugs(jug3: i, jug5: j),
-        node2: Waterjugs(jug3: i, jug5: Jug5.low)))
+for i in FirstJug.low .. FirstJug.high:
+  for j in SecondJug.low .. SecondJug.high:
+    if i > FirstJug.low:
+      graf.addEdges(((i, j), (FirstJug.low, j)))
+
+    if j > SecondJug.low:
+      graf.addEdges(((i, j), (i, SecondJug.low)))
 
 # full glass
-for i in Jug3.low .. Jug3.high:
-  for j in Jug5.low .. Jug5.high:
-    if i < Jug3.high:
-      graf.addEdges(Edge[Waterjugs](
-        node1: Waterjugs(jug3: i, jug5: j),
-        node2: Waterjugs(jug3: Jug3.high, jug5: j)))
-    if j < Jug5.high:
-      graf.addEdges(Edge[Waterjugs](
-        node1: Waterjugs(jug3: i, jug5: j),
-        node2: Waterjugs(jug3: i, jug5: Jug5.high)))
+for i in FirstJug.low .. FirstJug.high:
+  for j in SecondJug.low .. SecondJug.high:
+    if i < FirstJug.high:
+      graf.addEdges(((i, j), (FirstJug.high, j)))
+    if j < SecondJug.high:
+      graf.addEdges(((i, j), (i, SecondJug.high)))
 
 # pour jug 2 to jug 5
-for i in Jug3.low+1 .. Jug3.high:
-  for j in Jug5.low .. Jug5.high-1:
-    let toPour = min(abs(Jug5.high - j), i)
+for i in FirstJug.low+1 .. FirstJug.high:
+  for j in SecondJug.low .. SecondJug.high-1:
+    let toPour = min(abs(SecondJug.high - j), i)
     let edge = Edge[Waterjugs](
-      node1: Waterjugs(jug3: i, jug5: j),
-      node2: Waterjugs(
-        jug3: max(Jug3.low, i - toPour),
-        jug5: min(Jug5.high, j + toPour))
+      node1: (FirstJug i, j),
+      node2: (FirstJug max(FirstJug.low, i - toPour),
+              SecondJug min(SecondJug.high, j + toPour))
     )
     graf.addEdges edge
 
 # pour jug 5 to jug 2
-for i in Jug3.low .. Jug3.high-1:
-  for j in Jug5.low+1 .. Jug5.high:
-    let toPour = min(abs(Jug3.high - i), j)
+for i in FirstJug.low .. FirstJug.high-1:
+  for j in SecondJug.low+1 .. SecondJug.high:
+    let toPour = min(abs(FirstJug.high - i), j)
     let edge = Edge[Waterjugs](
-      node1: Waterjugs(jug3: i, jug5: j),
-      node2: Waterjugs(
-        jug3: max(Jug3.high, i + toPour),
-        jug5: min(Jug5.high, j - toPour))
+      node1: (i, SecondJug j),
+      node2: (
+        FirstJug max(FirstJug.high, i + toPour),
+        SecondJug min(SecondJug.high, j - toPour))
     )
     graf.addEdges edge
 
-let empty = Waterjugs(jug3: 0, jug5: 0)
-let fourL = collect(for i in Jug3.low .. Jug3.high: Waterjugs(jug3: i, jug5: 4))
+let empty = (FirstJug 0, SecondJug 0)
+let fourL = collect(for i in FirstJug.low .. FirstJug.high: (FirstJug i, SecondJug targetcap))
 for goal in fourL:
   echo fmt"Looking for steps from {empty} to {goal}"
   for step in graf.paths(empty, goal):

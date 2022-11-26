@@ -53,22 +53,22 @@ test "A* search":
       if x-1 >= mapnum[y].low:
         let c1 = Coord(x: x, y: y+1, weight: mapnum[y][x-1])
         thenewgraph.addVertices c1
-        thenewgraph.addEdges Edge[Coord](node1: c, node2: c1)
+        thenewgraph.addEdges (c, c1)
 
       if x+1 <= mapnum[y].high:
         let c1 = Coord(x: x+2, y: y+1, weight: mapnum[y][x+1])
         thenewgraph.addVertices c1
-        thenewgraph.addEdges Edge[Coord](node1: c, node2: c1)
+        thenewgraph.addEdges (c, c1)
 
       if y-1 >= mapnum.low:
         let c1 = Coord(x: x+1, y: y, weight: mapnum[y-1][x])
         thenewgraph.addVertices c1
-        thenewgraph.addEdges Edge[Coord](node1: c, node2: c1)
+        thenewgraph.addEdges (c, c1)
 
       if y+1 <= mapnum.high:
         let c1 = Coord(x: x+1, y: y+2, weight: mapnum[y+1][x])
         thenewgraph.addVertices c1
-        thenewgraph.addEdges Edge[Coord](node1: c, node2: c1)
+        thenewgraph.addEdges (c, c1)
 
   let
     start = Coord(x: 1, y: 1, weight: mapnum[0][0])

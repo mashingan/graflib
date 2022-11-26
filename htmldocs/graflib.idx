@@ -1,5 +1,3 @@
-Graflib	graflib.html#graflib	 Graflib	
-Example	graflib.html#graflib-example	  Example	
 Graph	graflib.html#Graph	graflib: Graph	
 Vertex	graflib.html#Vertex	graflib: Vertex	
 Edge	graflib.html#Edge	graflib: Edge	
@@ -13,6 +11,7 @@ contains	graflib.html#contains,Graph[T],Edge[T]	graflib: contains[T](graph: Grap
 contains	graflib.html#contains,Edge[T],Vertex[T]	graflib: contains[T](edge: Edge[T]; vertex: Vertex[T]): bool	
 addVertices	graflib.html#addVertices,Graph[T],varargs[T]	graflib: addVertices[T](graph: var Graph[T]; vertices: varargs[T])	
 addEdges	graflib.html#addEdges,Graph,varargs[Edge[T]]	graflib: addEdges[T](graph: var Graph; edges: varargs[Edge[T]])	
+addEdges	graflib.html#addEdges,Graph,varargs[]	graflib: addEdges[T](graph: var Graph; edges: varargs[(T, T)])	
 buildGraph	graflib.html#buildGraph,openArray[Vertex[T]],openArray[Edge[T]],bool,bool	graflib: buildGraph[T](vertices: openArray[Vertex[T]] = @[];\n              edges: openArray[Edge[T]] = @[]; directed: bool = false;\n              weighted: bool = false): Graph[T]	
 neighbors	graflib.html#neighbors,Graph[T],T	graflib: neighbors[T](graph: Graph[T]; vertex: T): seq[T]	
 `$`	graflib.html#$,Graph[T]	graflib: `$`[T](graph: Graph[T]): string	
@@ -31,3 +30,5 @@ deleteVertex	graflib.html#deleteVertex,Graph[T],Vertex[T]	graflib: deleteVertex[
 deleteEdge	graflib.html#deleteEdge,Graph[T],Edge[T]	graflib: deleteEdge[T](graph: var Graph[T]; edge: Edge[T]): bool	
 `&lt;`	graflib.html#<,PriorityNode[T,C],PriorityNode[T,C]	graflib: `&lt;`[T, C](p1, p2: PriorityNode[T, C]): bool	
 a*	graflib.html#a*,Graph[T],T,T	graflib: a*[T, C](graph: var Graph[T]; start, goal: T): seq[Vertex[T]]	
+Graflib	graflib.html#graflib	 Graflib	
+Example	graflib.html#graflib-example	  Example	

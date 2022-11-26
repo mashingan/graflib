@@ -141,6 +141,10 @@ proc addEdges*[T] (graph: var Graph, edges: varargs[Edge[T]]) =
         swappedEdge notin graph.edges:
       graph.edges.add edge
 
+proc addEdges*[T](graph: var Graph, edges: varargs[(T, T)]) =
+  for edge in edges:
+    graph.addEdges Edge[T](node1: edge[0], node2: edge[1])
+
 proc buildGraph*[T](vertices: openArray[Vertex[T]] = @[],
     edges: openArray[Edge[T]] = @[],
     directed: bool = false, weighted: bool = false): Graph[T] =
@@ -204,6 +208,40 @@ proc swapEdge[T](edge:Edge[T]): Edge[T] =
   Edge[T](node1: edge.node2, node2: edge.node1)
 
 
+proc inPath[T](graph: Graph[T], goal, v: Vertex[T], state: var seq[Vertex[T]],
+               acc: var seq[seq[T]]) =
+  template outnodes(v: T): untyped =
+    when compiles(v.next(graph.edges)):
+      v.next(graph.edges)
+    else:
+      graph.neighbors(v)
+
+  withinTrail:
+    echo "visiting: ", v
+    echo "current state: ", state
+  state.add v
+  if v == goal:
+    withinTrail: echo "return state: ", state
+    acc.add state
+    return
+  var nextbound = outnodes v
+  withinTrail: echo "current nextbound: ", nextbound
+  if nextbound == @[]:
+    withinTrail: echo "no nextbound"
+  var nextstate = newSeq[Vertex[T]]()
+  for next in nextbound:
+    withinTrail: echo "to visit next: ", next
+    when compiles(next.isCycle):
+      let cycled = next.isCycle
+    else:
+      let cycled = false
+    if next in state and not cycled:
+      withinTrail: echo next, " already in state"
+      continue
+    graph.inPath(goal, next, state, acc)
+    state = state[0 .. ^2]
+  withinTrail: echo "nextstate: ", nextstate
+
 proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
     seq[seq[Vertex[T]]] =
   ## Paths is searching for all availables path from v1 to v2.
@@ -223,53 +261,9 @@ proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
   # if v1 notin graph.vertices or v2 notin graph.vertices:
   #   return @[]
 
-  template outnodes(v: T): untyped =
-    when compiles(v.next(graph.edges)):
-      v.next(graph.edges)
-    else:
-      graph.neighbors(v)
-
-  var
-    tempresult = newSeq[seq[Vertex[T]]]()
-    outbounds = outnodes v1
-  withinTrail: echo "current outbounds: ", outbounds
-
-
-  proc inPath(goal, v: Vertex[T], state: var seq[Vertex[T]]): bool =
-    withinTrail:
-      echo "visiting: ", v
-      echo "current state: ", state
-    state.add v
-    if v == goal:
-      withinTrail: echo "return state: ", state
-      tempresult.add state
-      state = state[0 .. ^2]
-      return true
-    var nextbound = outnodes v
-    withinTrail: echo "current nextbound: ", nextbound
-    if nextbound == @[]:
-      withinTrail: echo "no nextbound"
-    var nextstate = newSeq[Vertex[T]]()
-    for next in nextbound:
-      withinTrail: echo "to visit next: ", next
-      when compiles(next.isCycle):
-        let cycled = next.isCycle
-      else:
-        let cycled = false
-      if next in state and not cycled:
-        withinTrail: echo next, " already in state"
-        continue
-      if not inPath(goal, next, state):
-        state = state[0 .. ^2]
-    withinTrail: echo "nextstate: ", nextstate
-    false
-
-  for v in outbounds:
-    var state = @[v1]
-    discard inpath(v2, v, state)
-
-  withinTrail: echo "tempresult: ", tempresult
-  result = tempresult.deduplicate
+  var state = newseq[T]()
+  graph.inpath(v2, v1, state, result)
+  withinTrail: echo "final result: ", result
 
 proc shortestPath*[T](graph: Graph[T], v1, v2: T): seq[Vertex[T]]
   {.deprecated: "Use `a*` proc for better customized search".} =

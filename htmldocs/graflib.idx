@@ -1,3 +1,5 @@
+Graflib	graflib.html#graflib	 Graflib	
+Example	graflib.html#graflib-example	  Example	
 Graph	graflib.html#Graph	graflib: Graph	
 Vertex	graflib.html#Vertex	graflib: Vertex	
 Edge	graflib.html#Edge	graflib: Edge	
@@ -30,5 +32,3 @@ deleteVertex	graflib.html#deleteVertex,Graph[T],Vertex[T]	graflib: deleteVertex[
 deleteEdge	graflib.html#deleteEdge,Graph[T],Edge[T]	graflib: deleteEdge[T](graph: var Graph[T]; edge: Edge[T]): bool	
 `&lt;`	graflib.html#<,PriorityNode[T,C],PriorityNode[T,C]	graflib: `&lt;`[T, C](p1, p2: PriorityNode[T, C]): bool	
 a*	graflib.html#a*,Graph[T],T,T	graflib: a*[T, C](graph: var Graph[T]; start, goal: T): seq[Vertex[T]]	
-Graflib	graflib.html#graflib	 Graflib	
-Example	graflib.html#graflib-example	  Example	

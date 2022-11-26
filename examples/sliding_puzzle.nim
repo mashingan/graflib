@@ -1,4 +1,4 @@
-import std/[sugar, sequtils, strutils]
+import std/[sugar, sequtils, strutils, strformat]
 when not defined(fixedInitials):
     import std/random
 import graflib
@@ -117,12 +117,13 @@ func distance(p1, p2: Pos): int =
 
 proc `$`(p: Pos): string =
     var dist = (@p).distribute(maxheight, spread = false)
-    result = '\n' & dist.map(arr => arr.join(", ")).join("\n") & '\n'
+    result = '\n' & dist.map(arr => arr.mapIt(fmt"{it:>2}").join(", ")).join("\n") & '\n'
 
 var count = 0
 proc next(p: Pos; edges: seq[Edge[Pos]]): seq[Pos] =
     withinTrail: echo "currp: ", p
     inc count
+    if count >= 1_000_000: return @[]
     var idx = -1
     for i, n in p:
         if n == 0:

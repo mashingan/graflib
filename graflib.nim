@@ -209,7 +209,7 @@ proc swapEdge[T](edge:Edge[T]): Edge[T] =
 
 
 proc inPath[T](graph: Graph[T], goal, v: Vertex[T], state: var seq[Vertex[T]],
-               acc: var seq[seq[T]]): bool =
+               acc: var seq[seq[T]]) =
   template outnodes(v: T): untyped =
     when compiles(v.next(graph.edges)):
       v.next(graph.edges)
@@ -223,8 +223,7 @@ proc inPath[T](graph: Graph[T], goal, v: Vertex[T], state: var seq[Vertex[T]],
   if v == goal:
     withinTrail: echo "return state: ", state
     acc.add state
-    state = state[0 .. ^2]
-    return true
+    return
   var nextbound = outnodes v
   withinTrail: echo "current nextbound: ", nextbound
   if nextbound == @[]:
@@ -239,10 +238,9 @@ proc inPath[T](graph: Graph[T], goal, v: Vertex[T], state: var seq[Vertex[T]],
     if next in state and not cycled:
       withinTrail: echo next, " already in state"
       continue
-    if not graph.inPath(goal, next, state, acc):
-      state = state[0 .. ^2]
+    graph.inPath(goal, next, state, acc)
+    state = state[0 .. ^2]
   withinTrail: echo "nextstate: ", nextstate
-  false
 
 proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
     seq[seq[Vertex[T]]] =
@@ -264,7 +262,7 @@ proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
   #   return @[]
 
   var state = newseq[T]()
-  discard graph.inpath(v2, v1, state, result)
+  graph.inpath(v2, v1, state, result)
   withinTrail: echo "final result: ", result
 
 proc shortestPath*[T](graph: Graph[T], v1, v2: T): seq[Vertex[T]]

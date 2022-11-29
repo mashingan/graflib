@@ -1,7 +1,10 @@
 # In this example we illustrate the classic puzzle of least coins for changes.
 # Using the initValue that can be defined during the compile time, with option
 # `-d:initValue=N` with N is the value that we want to check.
-# The default initValue is 1500.
+# The default initValue is 150_00.
+#
+# We're using the least nomimal in Cent hence a Dollar is 100 and 100 Dollars,
+# a Buck, is 100_00. So above default value is one hundred and fifty dollars.
 #
 # This illustration checking optimum (or minimum) coins for changes using
 # shrinking search-space for each visit of coin changes. The bigger the coin
@@ -13,18 +16,18 @@
 # yield 0 as invalid data but since we don't compare its coin, we compare the
 # current value only. Hence in the hash and `==` we only hash and compare the
 # current value of state changes.
-import std/[sugar, hashes]
+import std/[sugar, hashes, tables]
 import graflib
 
-const initValue {.intdefine.}: int = 1500
+const initValue {.intdefine.}: int = 150_00
 
 type
     Coin = enum
         Cent = 1
         Pound = 5
         Dime = 10
-        Dollar = 100
-        Buck = 1000
+        Dollar = 1_00
+        Buck = 100_00
     
     Changes = object
         currentValue: int
@@ -70,6 +73,6 @@ proc main =
         if abs(sum + int(coin)) == initValue:
             coinsChange.add coin
             break
-    dump coinsChange
+    dump coinsChange.toCountTable
 
 main()

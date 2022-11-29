@@ -16,12 +16,11 @@
 ##   $ nim c -d:trail yourcodefile
 ##
 ## The current implementation walks into graph nodes to find the connection
-## between origin node to destination node without consider the weight cost
-## each edge has. The sequences of nodes (vertices) will have its each
-## vertex/node having weight which different with defined nodes' weight.
-## The weight resulted in sequence of vertices for each node is actually
-## the cost of calculated edge so we can use that together with algorithm
-## module to find out the total cost of resulting path.
+## between origin node to destination node without specifically calculating
+## weight cost.
+## The weight cost actually user-calculated by defining
+## ``proc cost[T, C](n1, n2: T): C`` with C is must be comparable (`<`) and
+## addable (`+`). This function will be used when searching path using `A*`.
 ##
 ## Example
 ## -------
@@ -31,8 +30,8 @@
 ##     from sequtils import mapIt
 ##     import graflib
 ##
-##     # we build unweighted and undirected empty graph
-##     var graph = buildGraph[char]()
+##     # we build undirected empty graph
+##     var graph = buildGraph[string]()
 ##     doAssert(graph.vertices.len == 0)
 ##     doAssert(graph.edges.len == 0)
 ##
@@ -55,6 +54,27 @@
 ##     doAssert(graph.degree("origin1") == 3)
 ##     doAssert(graph.degree("origin2") == 2)
 ##
+##     # Another version would be defining edge each time node visited
+##     var graph2 = buildGraph[string]()
+##     func next(s: string; edges: seq[Edge[string]]): seq[string] =
+##       if s == "origin1":
+##         return @["destination1", "destination2", "origin2"]
+##       if s == "origin2":
+##         return @["destination2", "origin1"]
+##       if s == "destination1":
+##         return @["origin1"]
+##       if s == "destination2":
+##         return @["origin1", "origin2"]
+##     paths = graph2.paths("origin1", "destination2")
+##     doAssert(paths.len == 2)
+##     doAssert(paths[0] == @["origin1", "destination2"]
+## 
+##
+## With user-defined neighboring, user can keep their own structure
+## to search for next nodes to visit. Above example is illustrated a
+## constant and hard-coded connection from each nodes but user can
+## use, for example, table to keep nodes' connections and can be added
+## removed dynamically during the program running.
 ## When walking the connected graph, we use defined `==`
 ## for Vertex comparison. Hence if we use a specialized type
 ## for Vertex label, we need to define `==` operator for our type.
@@ -78,7 +98,7 @@ type
   Vertex*[T] = T  ## Alias left-over from previous dev version
 
   Edge*[T] = object
-    ## Representation of two connected nodes with weight cost.
+    ## Representation of two connected nodes.
     node1*: T
     node2*: T
 
@@ -226,9 +246,8 @@ proc inPath[T](graph: Graph[T], goal, v: Vertex[T], state: var seq[Vertex[T]],
     return
   var nextbound = outnodes v
   withinTrail: echo "current nextbound: ", nextbound
-  if nextbound == @[]:
+  if nextbound.len == 0:
     withinTrail: echo "no nextbound"
-  var nextstate = newSeq[Vertex[T]]()
   for next in nextbound:
     withinTrail: echo "to visit next: ", next
     when compiles(next.isCycle):
@@ -240,7 +259,6 @@ proc inPath[T](graph: Graph[T], goal, v: Vertex[T], state: var seq[Vertex[T]],
       continue
     graph.inPath(goal, next, state, acc)
     state = state[0 .. ^2]
-  withinTrail: echo "nextstate: ", nextstate
 
 proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
     seq[seq[Vertex[T]]] =
@@ -264,6 +282,57 @@ proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
   var state = newseq[T]()
   graph.inpath(v2, v1, state, result)
   withinTrail: echo "final result: ", result
+
+iterator inPath[T](graph: Graph[T], goal, v: T): seq[T] =
+  template outnodes(v: T): untyped =
+    when compiles(v.next(graph.edges)):
+      v.next(graph.edges)
+    else:
+      graph.neighbors(v)
+
+  var state = @[v].toDeque
+  while state.len > 0:
+    var node = state.popLast
+    withinTrail:
+      echo "visiting: ", node
+      echo "current state: ", state
+    if node == goal:
+      withinTrail: echo "return state: ", state
+      var res = newseq[T](state.len + 1)
+      for i, s in state.pairs:
+        res[i] = s
+      res[^1] = node
+      yield res
+    else:
+      var nextbound = outnodes node
+      withinTrail: echo "current nextbound: ", nextbound
+      if nextbound.len == 0:
+        withinTrail: echo "no nextbound"
+      for i in countdown(nextbound.high, nextbound.low):
+        let next = nextbound[i]
+        withinTrail: echo "to visit next: ", next
+        when compiles(next.isCycle):
+          let cycled = next.isCycle
+        else:
+          let cycled = false
+        # Because some of unknown and confusing error that
+        # compiler cannot find the `items` iterator from deques module
+        # even though it's already imported so checking membership
+        # is manually done like this.
+        var contained = false
+        for s in state.items:
+          if s == next:
+            contained = true
+            break
+        if contained and not cycled:
+        # if next in state and not cycled:
+          continue
+        state.addLast next
+
+iterator iterPaths*[T](graph: Graph[T], v1, v2: T): seq[T] =
+  {.warning: "iterPaths is experimental, could be disappear in next version.".}
+  for p in graph.inPath(v2, v1):
+    yield p
 
 proc shortestPath*[T](graph: Graph[T], v1, v2: T): seq[Vertex[T]]
   {.deprecated: "Use `a*` proc for better customized search".} =
@@ -374,11 +443,12 @@ proc `<`*[T, C](p1, p2: PriorityNode[T, C]): bool = p1.cost < p2.cost
 
 proc `a*`*[T, C](graph: var Graph[T], start, goal: T): seq[Vertex[T]] =
   ## A* search based on its start (v1) label (v2) to end.
-  ## Users need to provide accessible `proc cost(v1, v2: T): R` and
-  ## `proc distance(v1, v2: T): R` with T and R are matched with Graph[T].
-  ## In rare case users could also need to provide operator "+" and "<" for T
-  ## that returns R viz ```nim proc `+`(cost1, cost2: R): R``` and
-  ## ```nim proc `<`(cost1, cost2: R): bool```.
+  ## Users need to provide accessible `proc cost(v1, v2: T): C` and
+  ## `proc distance(v1, v2: T): C` with T is matched with Graph[T] and C is Addable and Comparable type.
+  ## In rare case users could also need to provide operator "+" and "<" for C
+  ## that returns the C type itself viz
+  ## ```nim proc `+`(cost1, cost2: C): C``` and
+  ## ```nim proc `<`(cost1, cost2: C): bool```.
   ## Additionally users could be needed to provide the hash proc for T,
   ## i.e `proc hash(t: T): Hash`. Check the std/hashes on how to do it.
 

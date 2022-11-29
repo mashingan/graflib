@@ -10,7 +10,7 @@
 # This example we describe the path is state of changes, hence we have the
 # current value and the coin to get that value.
 # For start and end of changes, we omit the Coin altogether, casted to int will
-# yield 0 as invalid data but we don't compare its coin, but we compare the
+# yield 0 as invalid data but since we don't compare its coin, we compare the
 # current value only. Hence in the hash and `==` we only hash and compare the
 # current value of state changes.
 import std/[sugar, hashes]
@@ -61,9 +61,15 @@ proc main =
         finish = Changes(currentValue: 0)
     let changes = `a*`[Changes, int](g, start, finish)
     var coinsChange: seq[Coin]
+    var sum = 0
     for change in changes:
         if int(change.coin) == 0: continue
         coinsChange.add change.coin
+        sum += int change.coin
+    for coin in coins:
+        if abs(sum + int(coin)) == initValue:
+            coinsChange.add coin
+            break
     dump coinsChange
 
 main()

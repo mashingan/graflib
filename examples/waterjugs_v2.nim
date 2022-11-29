@@ -7,6 +7,9 @@ const
   cap2 {.intdefine.}: int = 5
   targetcap {.intdefine.} = 4
 
+when targetcap > cap1 and targetcap > cap2:
+  {.error: &"targetcap ({targetcap}) cannot bigger than any capacities, {cap1} and {cap2}".}
+
 type
   FirstJug = range[0..cap1]
   SecondJug = range[0..cap2]
@@ -45,7 +48,10 @@ proc next(j: Waterjugs, edges: seq[Edge[Waterjugs]]): seq[Waterjugs] =
                 SecondJug min(SecondJug.high, j[1] - toPour))
 
 let empty = (FirstJug 0, SecondJug 0)
-let fourL = collect(for i in FirstJug.low .. FirstJug.high: (i, SecondJug targetcap))
+when cap1 > cap2:
+  let fourL = collect(for i in SecondJug.low .. SecondJug.high: (FirstJug targetcap, i))
+else:
+  let fourL = collect(for i in FirstJug.low .. FirstJug.high: (i, SecondJug targetcap))
 for goal in fourL:
   echo fmt"Looking for steps from {empty} to {goal}"
   for step in graf.paths(empty, goal):

@@ -236,11 +236,17 @@ proc inPath[T](graph: Graph[T], goal, v: Vertex[T], state: var seq[Vertex[T]],
     else:
       graph.neighbors(v)
 
+  template finished(v: T): untyped =
+    when compiles(v.goalCheck()):
+      v.goalCheck()
+    else:
+      v == goal
+
   withinTrail:
     echo "visiting: ", v
     echo "current state: ", state
   state.add v
-  if v == goal:
+  if finished(v):
     withinTrail: echo "return state: ", state
     acc.add state
     return
@@ -458,6 +464,12 @@ proc `a*`*[T, C](graph: var Graph[T], start, goal: T): seq[Vertex[T]] =
     else:
       graph.neighbors(v)
 
+  template finished(v: T): untyped =
+    when compiles(v.goalCheck()):
+      v.goalCheck()
+    else:
+      v == goal
+
   var
     costSoFar = initTable[T, C]()
     visited = initTable[T, T]()
@@ -470,19 +482,21 @@ proc `a*`*[T, C](graph: var Graph[T], start, goal: T): seq[Vertex[T]] =
   while visiting.len > 0:
     let nextpriority = visiting.pop
     let node = nextpriority.node
-    if node == goal: break
+    if finished(node): break
     let nextvisit = node.outnodes
     withinTrail:
       echo "visiting: ", node
     for nextnode in nextvisit:
       thecost = costSoFar[node] + node.label.cost(nextnode.label)
+      withinTrail:
+        echo "the cost of ", nextnode, " so far is ", thecost
       if nextnode notin costSoFar or thecost < costSoFar[nextnode]:
         costSoFar[nextnode] = thecost
         let priority = thecost + nextnode.label.distance(goal.label)
         visiting.push(PriorityNode[T, C](node: nextnode, cost: priority))
         visited[nextnode] = node
         withinTrail:
-          echo "added to queue with priority: ", priority
+          echo "added ", nextnode, " to queue with priority: ", priority
 
   var current = goal
   while true:

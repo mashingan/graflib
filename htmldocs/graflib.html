@@ -34,7 +34,6 @@ function main() {
     }
   }
 
-  const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
   function switchTheme(e) {
       if (e.target.checked) {
           document.documentElement.setAttribute('data-theme', 'dark');
@@ -45,30 +44,29 @@ function main() {
       }
   }
 
-  toggleSwitch.addEventListener('change', switchTheme, false);
+  const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+  if (toggleSwitch !== null) {
+    toggleSwitch.addEventListener('change', switchTheme, false);
+  }
 
+  var currentTheme = localStorage.getItem('theme');
+  if (!currentTheme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    currentTheme = 'dark';
+  }
+  if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', "dark");
-    toggleSwitch.checked = true;
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', "light");
-    toggleSwitch.checked = false;
-  } else {
-    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-    if (currentTheme) {
-      document.documentElement.setAttribute('data-theme', currentTheme);
-
-      if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-      }
+    if (currentTheme === 'dark' && toggleSwitch !== null) {
+      toggleSwitch.checked = true;
     }
   }
 }
+
+window.addEventListener('DOMContentLoaded', main);
 </script>
 
 </head>
-<body onload="main()">
+<body>
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">graflib</h1>
@@ -83,6 +81,9 @@ function main() {
   </div>
   <div id="global-links">
     <ul class="simple">
+    <li>
+      <a href="theindex.html">Index</a>
+    </li>
     </ul>
   </div>
   <div id="searchInputDiv">
@@ -102,98 +103,175 @@ function main() {
 </ul><li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#Graph"
-    title="Graph[T] = object
-  directed*: bool              ## If true, every edge has only a direction
-                ## for each time its defined.
-  vertices*: seq[T]            ## Vertices or nodes
-  edges*: seq[Edge[T]]         ## Edge which spanned between node1 and node2"><wbr />Graph<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#Vertex"
-    title="Vertex[T] = T"><wbr />Vertex<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#Edge"
+      <li><a class="reference" href="#Edge"
     title="Edge[T] = object
   node1*: T
-  node2*: T"><wbr />Edge<span class="attachedType"></span></a></li>
+  node2*: T">Edge</a></li>
+  <li><a class="reference" href="#Graph"
+    title="Graph[T] = object
+  directed*: bool            ## If true, every edge has only a direction
+                             ## for each time its defined.
+  vertices*: seq[T]          ## Vertices or nodes
+  edges*: seq[Edge[T]]       ## Edge which spanned between node1 and node2">Graph</a></li>
   <li><a class="reference" href="#GraphRef"
-    title="GraphRef[T] = ref Graph[T]"><wbr />Graph<wbr />Ref<span class="attachedType"></span></a></li>
+    title="GraphRef[T] = ref Graph[T]">GraphRef</a></li>
+  <li><a class="reference" href="#Vertex"
+    title="Vertex[T] = T">Vertex</a></li>
 
   </ul>
 </li>
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
+      <ul class="simple nested-toc-section">$
+      <li><a class="reference" href="#%24%2CEdge"
+    title="`$`(edge: Edge): string">`$`(edge: Edge): string</a></li>
+  <li><a class="reference" href="#%24%2CGraph%5BT%5D"
+    title="`$`[T](graph: Graph[T]): string">`$`[T](graph: Graph[T]): string</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section"><
+      <li><a class="reference" href="#%3C%2CPriorityNode%5BT%2CC%5D%2CPriorityNode%5BT%2CC%5D"
+    title="`&lt;`[T, C](p1, p2: PriorityNode[T, C]): bool">`&lt;`[T, C](p1, p2: PriorityNode[T, C]): bool</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">==
       <li><a class="reference" href="#%3D%3D%2CEdge%2CEdge"
-    title="`==`(a, b: Edge): bool"><wbr />`==`<span class="attachedType">Edge</span></a></li>
-  <li><a class="reference" href="#initEdge%2CT%2CT"
-    title="initEdge[T](n1, n2: T): Edge[T]"><wbr />init<wbr />Edge<span class="attachedType">Edge</span></a></li>
-  <li><a class="reference" href="#isDirected%2CGraph"
-    title="isDirected(graph: Graph): bool"><wbr />is<wbr />Directed<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#contains%2CGraph%2CVertex"
-    title="contains(graph: Graph; vertice: Vertex): bool"><wbr />contains<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#contains%2CGraph%5BT%5D%2CEdge%5BT%5D"
-    title="contains[T](graph: Graph[T]; edge: Edge[T]): bool"><wbr />contains<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#contains%2CEdge%5BT%5D%2CVertex%5BT%5D"
-    title="contains[T](edge: Edge[T]; vertex: Vertex[T]): bool"><wbr />contains<span class="attachedType">Edge</span></a></li>
-  <li><a class="reference" href="#addVertices%2CGraph%5BT%5D%2Cvarargs%5BT%5D"
-    title="addVertices[T](graph: var Graph[T]; vertices: varargs[T])"><wbr />add<wbr />Vertices<span class="attachedType">Graph</span></a></li>
+    title="`==`(a, b: Edge): bool">`==`(a, b: Edge): bool</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">a*
+      <li><a class="reference" href="#a%2A%2CGraph%5BT%5D%2CT%2CT"
+    title="a*[T, C](graph: var Graph[T]; start, goal: T): seq[Vertex[T]]">a*[T, C](graph: var Graph[T]; start, goal: T): seq[Vertex[T]]</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">addEdges
+      <li><a class="reference" href="#addEdges%2CGraph%2Cvarargs%5B%5D"
+    title="addEdges[T](graph: var Graph; edges: varargs[(T, T)])">addEdges[T](graph: var Graph; edges: varargs[(T, T)])</a></li>
   <li><a class="reference" href="#addEdges%2CGraph%2Cvarargs%5BEdge%5BT%5D%5D"
-    title="addEdges[T](graph: var Graph; edges: varargs[Edge[T]])"><wbr />add<wbr />Edges<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#addEdges%2CGraph%2Cvarargs%5B%5D"
-    title="addEdges[T](graph: var Graph; edges: varargs[(T, T)])"><wbr />add<wbr />Edges<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#buildGraph%2CopenArray%5BVertex%5BT%5D%5D%2CopenArray%5BEdge%5BT%5D%5D%2Cbool%2Cbool"
+    title="addEdges[T](graph: var Graph; edges: varargs[Edge[T]])">addEdges[T](graph: var Graph; edges: varargs[Edge[T]])</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">addVertices
+      <li><a class="reference" href="#addVertices%2CGraph%5BT%5D%2Cvarargs%5BT%5D"
+    title="addVertices[T](graph: var Graph[T]; vertices: varargs[T])">addVertices[T](graph: var Graph[T]; vertices: varargs[T])</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">adjacencyMatrix
+      <li><a class="reference" href="#adjacencyMatrix%2CGraph%5BT%5D"
+    title="adjacencyMatrix[T](graph: Graph[T]): seq[seq[int]]">adjacencyMatrix[T](graph: Graph[T]): seq[seq[int]]</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">buildDigraph
+      <li><a class="reference" href="#buildDigraph"
+    title="buildDigraph[T](): Graph">buildDigraph[T](): Graph</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">buildGraph
+      <li><a class="reference" href="#buildGraph%2CopenArray%5BVertex%5BT%5D%5D%2CopenArray%5BEdge%5BT%5D%5D%2Cbool%2Cbool"
     title="buildGraph[T](vertices: openArray[Vertex[T]] = @[];
               edges: openArray[Edge[T]] = @[]; directed: bool = false;
-              weighted: bool = false): Graph[T]"><wbr />build<wbr />Graph<span class="attachedType">Vertex</span></a></li>
-  <li><a class="reference" href="#neighbors%2CGraph%5BT%5D%2CT"
-    title="neighbors[T](graph: Graph[T]; vertex: T): seq[T]"><wbr />neighbors<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#%24%2CGraph%5BT%5D"
-    title="`$`[T](graph: Graph[T]): string"><wbr />`$`<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#%24%2CEdge"
-    title="`$`(edge: Edge): string"><wbr />`$`<span class="attachedType">Edge</span></a></li>
-  <li><a class="reference" href="#indegree%2CGraph%5BT%5D%2CT"
-    title="indegree[T](graph: Graph[T]; vertex: T): int"><wbr />indegree<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#outdegree%2CGraph%5BT%5D%2CT"
-    title="outdegree[T](graph: Graph[T]; vertex: T): int"><wbr />outdegree<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#degree%2CGraph%2CVertex"
-    title="degree(graph: Graph; vertex: Vertex): int"><wbr />degree<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#buildDigraph"
-    title="buildDigraph[T](): Graph"><wbr />build<wbr />Digraph<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#newGraph"
-    title="newGraph[T](): GraphRef[T]"><wbr />new<wbr />Graph<span class="attachedType">GraphRef</span></a></li>
-  <li><a class="reference" href="#isConnected%2CGraph%5BT%5D"
-    title="isConnected[T](graph: Graph[T]): bool"><wbr />is<wbr />Connected<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#paths%2CGraph%5BT%5D%2CVertex%5BT%5D%2CVertex%5BT%5D"
-    title="paths[T](graph: Graph[T]; v1, v2: Vertex[T]): seq[seq[Vertex[T]]]"><wbr />paths<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#shortestPath%2CGraph%5BT%5D%2CT%2CT"
-    title="shortestPath[T](graph: Graph[T]; v1, v2: T): seq[Vertex[T]]"><wbr />shortest<wbr />Path<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#adjacencyMatrix%2CGraph%5BT%5D"
-    title="adjacencyMatrix[T](graph: Graph[T]): seq[seq[int]]"><wbr />adjacency<wbr />Matrix<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#incidenceMatrix%2CGraph"
-    title="incidenceMatrix(graph: Graph): seq[seq[int]]"><wbr />incidence<wbr />Matrix<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#deleteVertex%2CGraph%5BT%5D%2CVertex%5BT%5D"
-    title="deleteVertex[T](graph: var Graph[T]; vertex: Vertex[T]): bool"><wbr />delete<wbr />Vertex<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#deleteEdge%2CGraph%5BT%5D%2CEdge%5BT%5D"
-    title="deleteEdge[T](graph: var Graph[T]; edge: Edge[T]): bool"><wbr />delete<wbr />Edge<span class="attachedType">Graph</span></a></li>
-  <li><a class="reference" href="#%3C%2CPriorityNode%5BT%2CC%5D%2CPriorityNode%5BT%2CC%5D"
-    title="`&lt;`[T, C](p1, p2: PriorityNode[T, C]): bool"><wbr />`&lt;`<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#a%2A%2CGraph%5BT%5D%2CT%2CT"
-    title="a*[T, C](graph: var Graph[T]; start, goal: T): seq[Vertex[T]]"><wbr />a*<span class="attachedType">Graph</span></a></li>
+              weighted: bool = false): Graph[T]">buildGraph[T](vertices: openArray[Vertex[T]] = @[];
+              edges: openArray[Edge[T]] = @[]; directed: bool = false;
+              weighted: bool = false): Graph[T]</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">contains
+      <li><a class="reference" href="#contains%2CGraph%2CVertex"
+    title="contains(graph: Graph; vertice: Vertex): bool">contains(graph: Graph; vertice: Vertex): bool</a></li>
+  <li><a class="reference" href="#contains%2CEdge%5BT%5D%2CVertex%5BT%5D"
+    title="contains[T](edge: Edge[T]; vertex: Vertex[T]): bool">contains[T](edge: Edge[T]; vertex: Vertex[T]): bool</a></li>
+  <li><a class="reference" href="#contains%2CGraph%5BT%5D%2CEdge%5BT%5D"
+    title="contains[T](graph: Graph[T]; edge: Edge[T]): bool">contains[T](graph: Graph[T]; edge: Edge[T]): bool</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">degree
+      <li><a class="reference" href="#degree%2CGraph%2CVertex"
+    title="degree(graph: Graph; vertex: Vertex): int">degree(graph: Graph; vertex: Vertex): int</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">deleteEdge
+      <li><a class="reference" href="#deleteEdge%2CGraph%5BT%5D%2CEdge%5BT%5D"
+    title="deleteEdge[T](graph: var Graph[T]; edge: Edge[T]): bool">deleteEdge[T](graph: var Graph[T]; edge: Edge[T]): bool</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">deleteVertex
+      <li><a class="reference" href="#deleteVertex%2CGraph%5BT%5D%2CVertex%5BT%5D"
+    title="deleteVertex[T](graph: var Graph[T]; vertex: Vertex[T]): bool">deleteVertex[T](graph: var Graph[T]; vertex: Vertex[T]): bool</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">incidenceMatrix
+      <li><a class="reference" href="#incidenceMatrix%2CGraph"
+    title="incidenceMatrix(graph: Graph): seq[seq[int]]">incidenceMatrix(graph: Graph): seq[seq[int]]</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">indegree
+      <li><a class="reference" href="#indegree%2CGraph%5BT%5D%2CT"
+    title="indegree[T](graph: Graph[T]; vertex: T): int">indegree[T](graph: Graph[T]; vertex: T): int</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">initEdge
+      <li><a class="reference" href="#initEdge%2CT%2CT"
+    title="initEdge[T](n1, n2: T): Edge[T]">initEdge[T](n1, n2: T): Edge[T]</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">isConnected
+      <li><a class="reference" href="#isConnected%2CGraph%5BT%5D"
+    title="isConnected[T](graph: Graph[T]): bool">isConnected[T](graph: Graph[T]): bool</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">isDirected
+      <li><a class="reference" href="#isDirected%2CGraph"
+    title="isDirected(graph: Graph): bool">isDirected(graph: Graph): bool</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">neighbors
+      <li><a class="reference" href="#neighbors%2CGraph%5BT%5D%2CT"
+    title="neighbors[T](graph: Graph[T]; vertex: T): seq[T]">neighbors[T](graph: Graph[T]; vertex: T): seq[T]</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">newGraph
+      <li><a class="reference" href="#newGraph"
+    title="newGraph[T](): GraphRef[T]">newGraph[T](): GraphRef[T]</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">outdegree
+      <li><a class="reference" href="#outdegree%2CGraph%5BT%5D%2CT"
+    title="outdegree[T](graph: Graph[T]; vertex: T): int">outdegree[T](graph: Graph[T]; vertex: T): int</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">paths
+      <li><a class="reference" href="#paths%2CGraph%5BT%5D%2CVertex%5BT%5D%2CVertex%5BT%5D"
+    title="paths[T](graph: Graph[T]; v1, v2: Vertex[T]): seq[seq[Vertex[T]]]">paths[T](graph: Graph[T]; v1, v2: Vertex[T]): seq[seq[Vertex[T]]]</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">shortestPath
+      <li><a class="reference" href="#shortestPath%2CGraph%5BT%5D%2CT%2CT"
+    title="shortestPath[T](graph: Graph[T]; v1, v2: T): seq[Vertex[T]]">shortestPath[T](graph: Graph[T]; v1, v2: T): seq[Vertex[T]]</a></li>
+
+  </ul>
 
   </ul>
 </li>
 <li>
   <a class="reference reference-toplevel" href="#15" id="65">Iterators</a>
   <ul class="simple simple-toc-section">
+      <ul class="simple nested-toc-section">iterPaths
       <li><a class="reference" href="#iterPaths.i%2CGraph%5BT%5D%2CT%2CT"
-    title="iterPaths[T](graph: Graph[T]; v1, v2: T): seq[T]"><wbr />iter<wbr />Paths<span class="attachedType">Graph</span></a></li>
+    title="iterPaths[T](graph: Graph[T]; v1, v2: T): seq[T]">iterPaths[T](graph: Graph[T]; v1, v2: T): seq[T]</a></li>
+
+  </ul>
 
   </ul>
 </li>
 <li>
   <a class="reference reference-toplevel" href="#18" id="68">Templates</a>
   <ul class="simple simple-toc-section">
+      <ul class="simple nested-toc-section">label
       <li><a class="reference" href="#label.t%2Cuntyped"
-    title="label(v: untyped): untyped"><wbr />label<span class="attachedType"></span></a></li>
+    title="label(v: untyped): untyped">label(v: untyped): untyped</a></li>
+
+  </ul>
 
   </ul>
 </li>
@@ -201,14 +279,18 @@ function main() {
 </ul>
 
   </div>
+  &nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L1"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L1" class="link-seesrc" target="_blank" >Edit</a>
+
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   
   <p class="module-desc">
 <h1><a class="toc-backref" id="graflib" href="#graflib">Graflib</a></h1><p>A simple graph implementation library. To scrutiny the trail when walking the graph, define <tt class="docutils literal"><span class="pre">trail</span></tt> to see in stdout the nodes visited. Compile it:</p>
-<pre>
-$ nim c -d:trail yourcodefile</pre>
-<p>The current implementation walks into graph nodes to find the connection between origin node to destination node without specifically calculating weight cost. The weight cost actually user-calculated by defining <tt class="docutils literal"><span class="pre">proc cost[T, C](n1, n2: T): C</span></tt> with C is must be comparable (<tt class="docutils literal"><span class="pre">&lt;</span></tt>) and addable (<tt class="docutils literal"><span class="pre">+</span></tt>). This function will be used when searching path using <tt class="docutils literal"><span class="pre">A*</span></tt>.</p>
+<pre>$ nim c -d:trail yourcodefile</pre>
+<p>The current implementation walks into graph nodes to find the connection between origin node to destination node without specifically calculating weight cost. The weight cost actually user-calculated by defining <tt class="docutils literal"><span class="pre">proc cost[T, C](n1, n2: T): C</span></tt> with C is must be comparable (<tt class="docutils literal"><span class="pre"><span class="Operator">&lt;</span></span></tt>) and addable (<tt class="docutils literal"><span class="pre"><span class="Operator">+</span></span></tt>). This function will be used when searching path using <tt class="docutils literal"><span class="pre"><span class="Identifier">A</span><span class="Operator">*</span></span></tt>.</p>
 
 <h2><a class="toc-backref" id="graflib-example" href="#graflib-example">Example</a></h2><blockquote><p><pre class="listing"><span class="Keyword">from</span> <span class="Identifier">sequtils</span> <span class="Keyword">import</span> <span class="Identifier">mapIt</span>
 <span class="Keyword">import</span> <span class="Identifier">graflib</span>
@@ -251,40 +333,13 @@ $ nim c -d:trail yourcodefile</pre>
 <span class="Identifier">paths</span> <span class="Operator">=</span> <span class="Identifier">graph2</span><span class="Operator">.</span><span class="Identifier">paths</span><span class="Punctuation">(</span><span class="StringLit">&quot;origin1&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;destination2&quot;</span><span class="Punctuation">)</span>
 <span class="Identifier">doAssert</span><span class="Punctuation">(</span><span class="Identifier">paths</span><span class="Operator">.</span><span class="Identifier">len</span> <span class="Operator">==</span> <span class="DecNumber">2</span><span class="Punctuation">)</span>
 <span class="Identifier">doAssert</span><span class="Punctuation">(</span><span class="Identifier">paths</span><span class="Punctuation">[</span><span class="DecNumber">0</span><span class="Punctuation">]</span> <span class="Operator">==</span> <span class="Operator">@</span><span class="Punctuation">[</span><span class="StringLit">&quot;origin1&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;destination2&quot;</span><span class="Punctuation">]</span></pre></p></blockquote>
-<p>With user-defined neighboring, user can keep their own structure to search for next nodes to visit. Above example is illustrated a constant and hard-coded connection from each nodes but user can use, for example, table to keep nodes' connections and can be added removed dynamically during the program running. When walking the connected graph, we use defined <tt class="docutils literal"><span class="pre">==</span></tt> for Vertex comparison. Hence if we use a specialized type for Vertex label, we need to define <tt class="docutils literal"><span class="pre">==</span></tt> operator for our type.</p>
-<p>With additional A* search (proc <tt class="docutils literal"><span class="pre">a*</span></tt>), users must provide additional procs to make it works. Read the <tt class="docutils literal"><span class="pre">a*</span></tt> proc documentation for the detail.</p>
+<p>With user-defined neighboring, user can keep their own structure to search for next nodes to visit. Above example is illustrated a constant and hard-coded connection from each nodes but user can use, for example, table to keep nodes' connections and can be added removed dynamically during the program running. When walking the connected graph, we use defined <tt class="docutils literal"><span class="pre"><span class="Operator">==</span></span></tt> for Vertex comparison. Hence if we use a specialized type for Vertex label, we need to define <tt class="docutils literal"><span class="pre"><span class="Operator">==</span></span></tt> operator for our type.</p>
+<p>With additional A* search (proc <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span><span class="Operator">*</span></span></tt>), users must provide additional procs to make it works. Read the <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span><span class="Operator">*</span></span></tt> proc documentation for the detail.</p>
 </p>
   <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
-<a id="Graph"></a>
-<dt><pre><a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">directed</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>              <span class="Comment">## If true, every edge has only a direction</span>
-                <span class="Comment">## for each time its defined.</span>
-  <span class="Identifier">vertices</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span>            <span class="Comment">## Vertices or nodes</span>
-  <span class="Identifier">edges</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span>         <span class="Comment">## Edge which spanned between node1 and node2</span>
-  </pre></dt>
-<dd>
-
-Graph type that implemented generically using <tt class="docutils literal"><span class="pre">T</span></tt> type as the node.
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L91"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L91" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="Vertex"></a>
-<dt><pre><a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Identifier">T</span></pre></dt>
-<dd>
-
-Alias left-over from previous dev version
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L98"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L98" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="Edge"></a>
+<div id="Edge">
 <dt><pre><a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">object</span>
   <span class="Identifier">node1</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">T</span>
   <span class="Identifier">node2</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">T</span>
@@ -293,254 +348,380 @@ class="link-seesrc" target="_blank">Source</a>
 
 Representation of two connected nodes.
 &nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L100"
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L100"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L100" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L100" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="GraphRef"></a>
+</div>
+<div id="Graph">
+<dt><pre><a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">directed</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>            <span class="Comment">## If true, every edge has only a direction</span>
+                             <span class="Comment">## for each time its defined.</span>
+  <span class="Identifier">vertices</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span>          <span class="Comment">## Vertices or nodes</span>
+  <span class="Identifier">edges</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span>       <span class="Comment">## Edge which spanned between node1 and node2</span>
+  </pre></dt>
+<dd>
+
+Graph type that implemented generically using <tt class="docutils literal"><span class="pre">T</span></tt> type as the node.
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L91"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L91" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="GraphRef">
 <dt><pre><a href="graflib.html#GraphRef"><span class="Identifier">GraphRef</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">ref</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
 <dd>
 
 Reference-type graph.
 &nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L105"
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L105"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L105" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L105" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
+</div>
+<div id="Vertex">
+<dt><pre><a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span class="Other">=</span> <span class="Identifier">T</span></pre></dt>
+<dd>
+
+Alias left-over from previous dev version
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L98"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L98" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
 
 </dl></div>
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<a id="==,Edge,Edge"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#%3D%3D%2CEdge%2CEdge"><span class="Identifier">`==`</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">,</span> <span class="Identifier">b</span><span class="Other">:</span> <a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L114"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L114" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="initEdge,T,T"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#initEdge%2CT%2CT"><span class="Identifier">initEdge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">n1</span><span class="Other">,</span> <span class="Identifier">n2</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L118"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L118" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="isDirected,Graph"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#isDirected%2CGraph"><span class="Identifier">isDirected</span></a><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L121"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L121" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="contains,Graph,Vertex"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#contains%2CGraph%2CVertex"><span class="Identifier">contains</span></a><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">;</span> <span class="Identifier">vertice</span><span class="Other">:</span> <a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L123"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L123" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="contains,Graph[T],Edge[T]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#contains%2CGraph%5BT%5D%2CEdge%5BT%5D"><span class="Identifier">contains</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">edge</span><span class="Other">:</span> <a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L126"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L126" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="contains,Edge[T],Vertex[T]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#contains%2CEdge%5BT%5D%2CVertex%5BT%5D"><span class="Identifier">contains</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">edge</span><span class="Other">:</span> <a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">vertex</span><span class="Other">:</span> <a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L134"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L134" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="addVertices,Graph[T],varargs[T]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#addVertices%2CGraph%5BT%5D%2Cvarargs%5BT%5D"><span class="Identifier">addVertices</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">vertices</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L138"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L138" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="addEdges,Graph,varargs[Edge[T]]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#addEdges%2CGraph%2Cvarargs%5BEdge%5BT%5D%5D"><span class="Identifier">addEdges</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">;</span> <span class="Identifier">edges</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L143"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L143" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="addEdges,Graph,varargs[]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#addEdges%2CGraph%2Cvarargs%5B%5D"><span class="Identifier">addEdges</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">;</span> <span class="Identifier">edges</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Other">(</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L164"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L164" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="buildGraph,openArray[Vertex[T]],openArray[Edge[T]],bool,bool"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#buildGraph%2CopenArray%5BVertex%5BT%5D%5D%2CopenArray%5BEdge%5BT%5D%5D%2Cbool%2Cbool"><span class="Identifier">buildGraph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">vertices</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
-                  <span class="Identifier">edges</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">directed</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
-                  <span class="Identifier">weighted</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L168"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L168" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="neighbors,Graph[T],T"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#neighbors%2CGraph%5BT%5D%2CT"><span class="Identifier">neighbors</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">vertex</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L183"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L183" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="$,Graph[T]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#%24%2CGraph%5BT%5D"><span class="Identifier">`$`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L194"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L194" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="$,Edge"></a>
+<div id="$,Edge">
 <dt><pre><span class="Keyword">proc</span> <a href="#%24%2CEdge"><span class="Identifier">`$`</span></a><span class="Other">(</span><span class="Identifier">edge</span><span class="Other">:</span> <a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L203"
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L203"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L203" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L203" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="indegree,Graph[T],T"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#indegree%2CGraph%5BT%5D%2CT"><span class="Identifier">indegree</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">vertex</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
+</div>
+<div id="$,Graph[T]">
+<dt><pre><span class="Keyword">proc</span> <a href="#%24%2CGraph%5BT%5D"><span class="Identifier">`$`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L206"
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L194"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L206" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L194" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="outdegree,Graph[T],T"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#outdegree%2CGraph%5BT%5D%2CT"><span class="Identifier">outdegree</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">vertex</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
+</div>
+<div id="<,PriorityNode[T,C],PriorityNode[T,C]">
+<dt><pre><span class="Keyword">proc</span> <a href="#%3C%2CPriorityNode%5BT%2CC%5D%2CPriorityNode%5BT%2CC%5D"><span class="Identifier">`&lt;`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">C</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">p1</span><span class="Other">,</span> <span class="Identifier">p2</span><span class="Other">:</span> <span class="Identifier">PriorityNode</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">C</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+
+Internal function. Won't be usable because the PriorityNode itself is private. Added to support priority queue that requires this operator visible in the priority queue module.
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L445"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L445" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="==,Edge,Edge">
+<dt><pre><span class="Keyword">proc</span> <a href="#%3D%3D%2CEdge%2CEdge"><span class="Identifier">`==`</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">,</span> <span class="Identifier">b</span><span class="Other">:</span> <a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
 <dd>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L209"
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L114"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L209" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L114" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="degree,Graph,Vertex"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#degree%2CGraph%2CVertex"><span class="Identifier">degree</span></a><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">;</span> <span class="Identifier">vertex</span><span class="Other">:</span> <a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
+</div>
+<div id="a*,Graph[T],T,T">
+<dt><pre><span class="Keyword">proc</span> <a href="#a%2A%2CGraph%5BT%5D%2CT%2CT"><span class="Identifier">a*</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">C</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">start</span><span class="Other">,</span> <span class="Identifier">goal</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
+<dd>
+
+<p>A* search based on its start (v1) label (v2) to end. Users need to provide accessible <tt class="docutils literal"><span class="pre"><span class="Keyword">proc</span> <span class="Identifier">cost</span><span class="Punctuation">(</span><span class="Identifier">v1</span><span class="Punctuation">,</span> <span class="Identifier">v2</span><span class="Punctuation">:</span> <span class="Identifier">T</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">C</span></span></tt> and <tt class="docutils literal"><span class="pre"><span class="Keyword">proc</span> <span class="Identifier">distance</span><span class="Punctuation">(</span><span class="Identifier">v1</span><span class="Punctuation">,</span> <span class="Identifier">v2</span><span class="Punctuation">:</span> <span class="Identifier">T</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">C</span></span></tt> with T is matched with Graph[T] and C is Addable and Comparable type. In rare case users could also need to provide operator &quot;+&quot; and &quot;&lt;&quot; for C that returns the C type itself viz</p>
+<p><pre class="listing"><span class="Keyword">proc</span> <span class="Punctuation">`</span><span class="Operator">+</span><span class="Punctuation">`</span><span class="Punctuation">(</span><span class="Identifier">cost1</span><span class="Punctuation">,</span> <span class="Identifier">cost2</span><span class="Punctuation">:</span> <span class="Identifier">C</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">C</span></pre> and</p>
+<p><pre class="listing"><span class="Keyword">proc</span> <span class="Punctuation">`</span><span class="Operator">&lt;</span><span class="Punctuation">`</span><span class="Punctuation">(</span><span class="Identifier">cost1</span><span class="Punctuation">,</span> <span class="Identifier">cost2</span><span class="Punctuation">:</span> <span class="Identifier">C</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span></pre>. Additionally users could be needed to provide the hash proc for T, i.e <tt class="docutils literal"><span class="pre"><span class="Keyword">proc</span> <span class="Identifier">hash</span><span class="Punctuation">(</span><span class="Identifier">t</span><span class="Punctuation">:</span> <span class="Identifier">T</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">Hash</span></span></tt>. Check the std/hashes on how to do it.</p>
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L450"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L450" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="addEdges,Graph,varargs[]">
+<dt><pre><span class="Keyword">proc</span> <a href="#addEdges%2CGraph%2Cvarargs%5B%5D"><span class="Identifier">addEdges</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">;</span> <span class="Identifier">edges</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Other">(</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
 <dd>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L212"
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L164"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L212" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L164" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="buildDigraph"></a>
+</div>
+<div id="addEdges,Graph,varargs[Edge[T]]">
+<dt><pre><span class="Keyword">proc</span> <a href="#addEdges%2CGraph%2Cvarargs%5BEdge%5BT%5D%5D"><span class="Identifier">addEdges</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">;</span> <span class="Identifier">edges</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L143"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L143" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="addVertices,Graph[T],varargs[T]">
+<dt><pre><span class="Keyword">proc</span> <a href="#addVertices%2CGraph%5BT%5D%2Cvarargs%5BT%5D"><span class="Identifier">addVertices</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">vertices</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L138"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L138" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="adjacencyMatrix,Graph[T]">
+<dt><pre><span class="Keyword">proc</span> <a href="#adjacencyMatrix%2CGraph%5BT%5D"><span class="Identifier">adjacencyMatrix</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L389"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L389" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="buildDigraph">
 <dt><pre><span class="Keyword">proc</span> <a href="#buildDigraph"><span class="Identifier">buildDigraph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a></pre></dt>
 <dd>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L215"
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L215"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L215" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L215" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="newGraph"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#newGraph"><span class="Identifier">newGraph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="graflib.html#GraphRef"><span class="Identifier">GraphRef</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+</div>
+<div id="buildGraph,openArray[Vertex[T]],openArray[Edge[T]],bool,bool">
+<dt><pre><span class="Keyword">proc</span> <a href="#buildGraph%2CopenArray%5BVertex%5BT%5D%5D%2CopenArray%5BEdge%5BT%5D%5D%2Cbool%2Cbool"><span class="Identifier">buildGraph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">vertices</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
+                   <span class="Identifier">edges</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">directed</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
+                   <span class="Identifier">weighted</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
 <dd>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L218"
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L168"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L218" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L168" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="isConnected,Graph[T]"></a>
+</div>
+<div id="contains,Graph,Vertex">
+<dt><pre><span class="Keyword">proc</span> <a href="#contains%2CGraph%2CVertex"><span class="Identifier">contains</span></a><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">;</span> <span class="Identifier">vertice</span><span class="Other">:</span> <a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L123"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L123" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="contains,Edge[T],Vertex[T]">
+<dt><pre><span class="Keyword">proc</span> <a href="#contains%2CEdge%5BT%5D%2CVertex%5BT%5D"><span class="Identifier">contains</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">edge</span><span class="Other">:</span> <a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">vertex</span><span class="Other">:</span> <a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L134"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L134" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="contains,Graph[T],Edge[T]">
+<dt><pre><span class="Keyword">proc</span> <a href="#contains%2CGraph%5BT%5D%2CEdge%5BT%5D"><span class="Identifier">contains</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">edge</span><span class="Other">:</span> <a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L126"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L126" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="degree,Graph,Vertex">
+<dt><pre><span class="Keyword">proc</span> <a href="#degree%2CGraph%2CVertex"><span class="Identifier">degree</span></a><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">;</span> <span class="Identifier">vertex</span><span class="Other">:</span> <a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L212"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L212" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="deleteEdge,Graph[T],Edge[T]">
+<dt><pre><span class="Keyword">proc</span> <a href="#deleteEdge%2CGraph%5BT%5D%2CEdge%5BT%5D"><span class="Identifier">deleteEdge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">edge</span><span class="Other">:</span> <a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L433"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L433" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="deleteVertex,Graph[T],Vertex[T]">
+<dt><pre><span class="Keyword">proc</span> <a href="#deleteVertex%2CGraph%5BT%5D%2CVertex%5BT%5D"><span class="Identifier">deleteVertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">vertex</span><span class="Other">:</span> <a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L420"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L420" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="incidenceMatrix,Graph">
+<dt><pre><span class="Keyword">proc</span> <a href="#incidenceMatrix%2CGraph"><span class="Identifier">incidenceMatrix</span></a><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L402"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L402" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="indegree,Graph[T],T">
+<dt><pre><span class="Keyword">proc</span> <a href="#indegree%2CGraph%5BT%5D%2CT"><span class="Identifier">indegree</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">vertex</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L206"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L206" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="initEdge,T,T">
+<dt><pre><span class="Keyword">proc</span> <a href="#initEdge%2CT%2CT"><span class="Identifier">initEdge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">n1</span><span class="Other">,</span> <span class="Identifier">n2</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L118"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L118" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="isConnected,Graph[T]">
 <dt><pre><span class="Keyword">proc</span> <a href="#isConnected%2CGraph%5BT%5D"><span class="Identifier">isConnected</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
 <dd>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L221"
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L221"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L221" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L221" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="paths,Graph[T],Vertex[T],Vertex[T]"></a>
+</div>
+<div id="isDirected,Graph">
+<dt><pre><span class="Keyword">proc</span> <a href="#isDirected%2CGraph"><span class="Identifier">isDirected</span></a><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L121"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L121" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="neighbors,Graph[T],T">
+<dt><pre><span class="Keyword">proc</span> <a href="#neighbors%2CGraph%5BT%5D%2CT"><span class="Identifier">neighbors</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">vertex</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L183"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L183" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="newGraph">
+<dt><pre><span class="Keyword">proc</span> <a href="#newGraph"><span class="Identifier">newGraph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="graflib.html#GraphRef"><span class="Identifier">GraphRef</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L218"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L218" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="outdegree,Graph[T],T">
+<dt><pre><span class="Keyword">proc</span> <a href="#outdegree%2CGraph%5BT%5D%2CT"><span class="Identifier">outdegree</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">vertex</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L209"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L209" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="paths,Graph[T],Vertex[T],Vertex[T]">
 <dt><pre><span class="Keyword">proc</span> <a href="#paths%2CGraph%5BT%5D%2CVertex%5BT%5D%2CVertex%5BT%5D"><span class="Identifier">paths</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">v1</span><span class="Other">,</span> <span class="Identifier">v2</span><span class="Other">:</span> <a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
 <dd>
 
-<p>Paths is searching for all availables path from v1 to v2. By default searching for paths is not cycled, e.g. we have edges, <tt class="docutils literal"><span class="pre">a-&gt;b</span></tt>, <tt class="docutils literal"><span class="pre">b-&gt;c</span></tt>, <tt class="docutils literal"><span class="pre">c-&gt;d</span></tt>, <tt class="docutils literal"><span class="pre">a-&gt;c</span></tt>, <tt class="docutils literal"><span class="pre">a-&gt;d</span></tt>, <tt class="docutils literal"><span class="pre">c-&gt;b</span></tt> when we searched <tt class="docutils literal"><span class="pre">a-b-c</span></tt> and <tt class="docutils literal"><span class="pre">c</span></tt> has path to <tt class="docutils literal"><span class="pre">b</span></tt>, since it's not cycled <tt class="docutils literal"><span class="pre">c</span></tt> cannot visit <tt class="docutils literal"><span class="pre">b</span></tt> once more because it's has been visited. By defining the <tt class="docutils literal"><span class="pre">func isCycle(node: N): bool</span></tt> we can make a rule that it can visit more than once for a node. By default it's not defined and defaulting to false, or in other word, not cycled.</p>
-<p>Users can provide custom next nodes by defining <tt class="docutils literal"><span class="pre">proc next(node: N, edges: seq[Edge[N]]): seq[N]</span></tt> for their particular purpose. The arg <tt class="docutils literal"><span class="pre">edges</span></tt> is the current edges that graph has. It's supplied when users want to use it but in most cases they can ignore it.</p>
+<p>Paths is searching for all availables path from v1 to v2. By default searching for paths is not cycled, e.g. we have edges, <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span><span class="Operator">-&gt;</span><span class="Identifier">b</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="Identifier">b</span><span class="Operator">-&gt;</span><span class="Identifier">c</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="Identifier">c</span><span class="Operator">-&gt;</span><span class="Identifier">d</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span><span class="Operator">-&gt;</span><span class="Identifier">c</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span><span class="Operator">-&gt;</span><span class="Identifier">d</span></span></tt>, <tt class="docutils literal"><span class="pre"><span class="Identifier">c</span><span class="Operator">-&gt;</span><span class="Identifier">b</span></span></tt> when we searched <tt class="docutils literal"><span class="pre"><span class="Identifier">a</span><span class="Operator">-</span><span class="Identifier">b</span><span class="Operator">-</span><span class="Identifier">c</span></span></tt> and <tt class="docutils literal"><span class="pre"><span class="Identifier">c</span></span></tt> has path to <tt class="docutils literal"><span class="pre"><span class="Identifier">b</span></span></tt>, since it's not cycled <tt class="docutils literal"><span class="pre"><span class="Identifier">c</span></span></tt> cannot visit <tt class="docutils literal"><span class="pre"><span class="Identifier">b</span></span></tt> once more because it's has been visited. By defining the <tt class="docutils literal"><span class="pre"><span class="Keyword">func</span> <span class="Identifier">isCycle</span><span class="Punctuation">(</span><span class="Identifier">node</span><span class="Punctuation">:</span> <span class="Identifier">N</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span></span></tt> we can make a rule that it can visit more than once for a node. By default it's not defined and defaulting to false, or in other word, not cycled.</p>
+<p>Users can provide custom next nodes by defining <tt class="docutils literal"><span class="pre"><span class="Keyword">proc</span> <span class="Identifier">next</span><span class="Punctuation">(</span><span class="Identifier">node</span><span class="Punctuation">:</span> <span class="Identifier">N</span><span class="Punctuation">,</span> <span class="Identifier">edges</span><span class="Punctuation">:</span> <span class="Identifier">seq</span><span class="Punctuation">[</span><span class="Identifier">Edge</span><span class="Punctuation">[</span><span class="Identifier">N</span><span class="Punctuation">]</span><span class="Punctuation">]</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">seq</span><span class="Punctuation">[</span><span class="Identifier">N</span><span class="Punctuation">]</span></span></tt> for their particular purpose. The arg <tt class="docutils literal"><span class="pre"><span class="Identifier">edges</span></span></tt> is the current edges that graph has. It's supplied when users want to use it but in most cases they can ignore it.</p>
 
 &nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L263"
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L269"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L263" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L269" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="shortestPath,Graph[T],T,T"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#shortestPath%2CGraph%5BT%5D%2CT%2CT"><span class="Identifier">shortestPath</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">v1</span><span class="Other">,</span> <span class="Identifier">v2</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">deprecated</span><span class="Other">:</span> <span class="StringLit">&quot;Use `a*` proc for better customized search&quot;</span></span><span class="Other">.}</span></span></pre></dt>
+</div>
+<div id="shortestPath,Graph[T],T,T">
+<dt><pre><span class="Keyword">proc</span> <a href="#shortestPath%2CGraph%5BT%5D%2CT%2CT"><span class="Identifier">shortestPath</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">v1</span><span class="Other">,</span> <span class="Identifier">v2</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">deprecated</span><span class="Other">:</span> <span class="StringLit">&quot;Use `a*` proc for better customized search&quot;</span></span>.}</pre></dt>
 <dd>
   <div class="deprecation-message">
     <b>Deprecated:</b> Use `a*` proc for better customized search
@@ -548,109 +729,46 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L337"
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L343"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L337" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L343" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="adjacencyMatrix,Graph[T]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#adjacencyMatrix%2CGraph%5BT%5D"><span class="Identifier">adjacencyMatrix</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L383"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L383" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="incidenceMatrix,Graph"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#incidenceMatrix%2CGraph"><span class="Identifier">incidenceMatrix</span></a><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L396"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L396" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="deleteVertex,Graph[T],Vertex[T]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#deleteVertex%2CGraph%5BT%5D%2CVertex%5BT%5D"><span class="Identifier">deleteVertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">vertex</span><span class="Other">:</span> <a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L414"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L414" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="deleteEdge,Graph[T],Edge[T]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#deleteEdge%2CGraph%5BT%5D%2CEdge%5BT%5D"><span class="Identifier">deleteEdge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">edge</span><span class="Other">:</span> <a href="graflib.html#Edge"><span class="Identifier">Edge</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L427"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L427" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="<,PriorityNode[T,C],PriorityNode[T,C]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#%3C%2CPriorityNode%5BT%2CC%5D%2CPriorityNode%5BT%2CC%5D"><span class="Identifier">`&lt;`</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">C</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">p1</span><span class="Other">,</span> <span class="Identifier">p2</span><span class="Other">:</span> <span class="Identifier">PriorityNode</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">C</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
-<dd>
-
-Internal function. Won't be usable because the PriorityNode itself is private. Added to support priority queue that requires this operator visible in the priority queue module.
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L439"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L439" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="a*,Graph[T],T,T"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#a%2A%2CGraph%5BT%5D%2CT%2CT"><span class="Identifier">a*</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">,</span> <span class="Identifier">C</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">start</span><span class="Other">,</span> <span class="Identifier">goal</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="graflib.html#Vertex"><span class="Identifier">Vertex</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
-<dd>
-
-A* search based on its start (v1) label (v2) to end. Users need to provide accessible <tt class="docutils literal"><span class="pre">proc cost(v1, v2: T): C</span></tt> and <tt class="docutils literal"><span class="pre">proc distance(v1, v2: T): C</span></tt> with T is matched with Graph[T] and C is Addable and Comparable type. In rare case users could also need to provide operator &quot;+&quot; and &quot;&lt;&quot; for C that returns the C type itself viz <pre class="listing"><span class="Keyword">proc</span> <span class="Punctuation">`</span><span class="Operator">+</span><span class="Punctuation">`</span><span class="Punctuation">(</span><span class="Identifier">cost1</span><span class="Punctuation">,</span> <span class="Identifier">cost2</span><span class="Punctuation">:</span> <span class="Identifier">C</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">C</span></pre> and <pre class="listing"><span class="Keyword">proc</span> <span class="Punctuation">`</span><span class="Operator">&lt;</span><span class="Punctuation">`</span><span class="Punctuation">(</span><span class="Identifier">cost1</span><span class="Punctuation">,</span> <span class="Identifier">cost2</span><span class="Punctuation">:</span> <span class="Identifier">C</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span></pre>. Additionally users could be needed to provide the hash proc for T, i.e <tt class="docutils literal"><span class="pre">proc hash(t: T): Hash</span></tt>. Check the std/hashes on how to do it.
-&nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L444"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L444" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
+</div>
 
 </dl></div>
 <div class="section" id="15">
 <h1><a class="toc-backref" href="#15">Iterators</a></h1>
 <dl class="item">
-<a id="iterPaths.i,Graph[T],T,T"></a>
+<div id="iterPaths.i,Graph[T],T,T">
 <dt><pre><span class="Keyword">iterator</span> <a href="#iterPaths.i%2CGraph%5BT%5D%2CT%2CT"><span class="Identifier">iterPaths</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">graph</span><span class="Other">:</span> <a href="graflib.html#Graph"><span class="Identifier">Graph</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">v1</span><span class="Other">,</span> <span class="Identifier">v2</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
 <dd>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L332"
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L338"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L332" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L338" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
+</div>
 
 </dl></div>
 <div class="section" id="18">
 <h1><a class="toc-backref" href="#18">Templates</a></h1>
 <dl class="item">
-<a id="label.t,untyped"></a>
+<div id="label.t,untyped">
 <dt><pre><span class="Keyword">template</span> <a href="#label.t%2Cuntyped"><span class="Identifier">label</span></a><span class="Other">(</span><span class="Identifier">v</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/mashingan/graflib/tree/version-1-2/graflib.nim#L108"
+href="https://github.com/mashingan/graflib/tree/version-1-6/graflib.nim#L108"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L108" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/mashingan/graflib/edit/devel/graflib.nim#L108" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
+</div>
 
 </dl></div>
 
@@ -661,7 +779,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-11-29 10:35:08 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-12-01 15:33:50 UTC</small>
       </div>
     </div>
   </div>

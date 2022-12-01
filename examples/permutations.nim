@@ -7,12 +7,6 @@
 
 import graflib
 
-const nmax {.intdefine.}: int = 3
-
-when nmax <= 0:
-    import std/strformat
-    {.error: &"error nmax is not positive, provided {nmax}".}
-
 iterator permut*[T](arr: openArray[T]): seq[T] =
     var g = buildGraph[T]()
     for a in arr:
@@ -25,6 +19,12 @@ iterator permut*[T](arr: openArray[T]): seq[T] =
                 yield p
 
 when isMainModule:
+    const nmax {.intdefine.}: int = 3
+
+    when nmax <= 0:
+        import std/strformat
+        {.error: &"error nmax is not positive, provided {nmax}".}
+
     import std/[sugar, sequtils]
     for cc in permut(@['a', 'b', 'c']):
         dump cc

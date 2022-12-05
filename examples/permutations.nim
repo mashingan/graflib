@@ -7,15 +7,16 @@
 
 import graflib
 
-iterator permut*[T](arr: openArray[T]): seq[T] =
+iterator permut*[T](arr: openArray[T], length = int16.high): seq[T] =
     var g = buildGraph[T]()
+    let length = min(arr.len, length)
     for a in arr:
         for b in arr:
             g.addEdges (a, b)
     for a in arr:
         for b in arr:
             for p in g.paths(a, b):
-                if p.len != arr.len: continue
+                if p.len != length: continue
                 yield p
 
 when isMainModule:
@@ -34,3 +35,6 @@ when isMainModule:
 
     for ii in permut(toSeq(1 .. nmax)):
         dump ii
+
+    for ii2 in permut(toSeq(1..4), 3):
+        dump ii2

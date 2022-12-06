@@ -82,7 +82,7 @@
 ## With additional A* search (proc `a*`), users must provide additional
 ## procs to make it works. Read the `a*` proc documentation for the detail.
 
-import sequtils, tables, deques
+import std/[sequtils, tables, deques]
 from algorithm import reverse
 import heapqueue
 from sugar import dump
@@ -294,47 +294,54 @@ iterator inPath[T](graph: Graph[T], goal, v: T): seq[T] =
     else:
       graph.neighbors(v)
 
-  var state = @[v].toDeque
-  while state.len > 0:
-    var node = state.popLast
+  template isCycled(v: T): bool =
+    when compiles(v.isCycle):
+      v.isCycle
+    else:
+      false
+
+  const nim162AndUp = (NimMajor, NimMinor, NimPatch) >= (1, 6, 2)
+
+  var state: seq[T]
+  var visit = initDeque[Deque[T]]()
+  when nim162AndUp:
+    visit.addLast (@[v]).toDeque
+  else:
+    # Need to do this manually because deques.toDeque bugs
+    # accessing undefined symbol (it's defined but no forward declaration)
+    var vv = initDeque[T]()
+    vv.addLast v
+    visit.addLast vv
+  while visit.len > 0:
+    if visit[^1].len == 0:
+      if state.len > 1:
+        state = state[0 .. ^2]
+      discard visit.popLast
+      continue
+    var node = visit[^1].popFirst
+    if node in state and not node.isCycled:
+      withinTrail: echo node, " already in state"
+      continue
+    state.add node
     withinTrail:
       echo "visiting: ", node
       echo "current state: ", state
     if node == goal:
       withinTrail: echo "return state: ", state
-      var res = newseq[T](state.len + 1)
-      for i, s in state.pairs:
-        res[i] = s
-      res[^1] = node
-      yield res
+      yield state
+      state = state[0 .. ^2]
     else:
       var nextbound = outnodes node
       withinTrail: echo "current nextbound: ", nextbound
-      if nextbound.len == 0:
-        withinTrail: echo "no nextbound"
-      for i in countdown(nextbound.high, nextbound.low):
-        let next = nextbound[i]
-        withinTrail: echo "to visit next: ", next
-        when compiles(next.isCycle):
-          let cycled = next.isCycle
-        else:
-          let cycled = false
-        # Because some of unknown and confusing error that
-        # compiler cannot find the `items` iterator from deques module
-        # even though it's already imported so checking membership
-        # is manually done like this.
-        var contained = false
-        for s in state.items:
-          if s == next:
-            contained = true
-            break
-        if contained and not cycled:
-        # if next in state and not cycled:
-          continue
-        state.addLast next
+      when nim162AndUp:
+        visit.addLast nextbound.toDeque
+      else:
+        var nb = initDeque[T]()
+        for n in nextbound:
+          nb.addLast n
+        visit.addLast nb
 
 iterator iterPaths*[T](graph: Graph[T], v1, v2: T): seq[T] =
-  {.warning: "iterPaths is experimental, could be disappear in next version.".}
   for p in graph.inPath(v2, v1):
     yield p
 

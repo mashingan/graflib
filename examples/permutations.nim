@@ -7,7 +7,7 @@
 
 import graflib
 
-iterator permut*[T](arr: openArray[T], length = int16.high): seq[T] =
+iterator permut*[T](arr: openArray[T], length = int16.high): unown seq[T] =
     var g = buildGraph[T]()
     let length = min(arr.len, length)
     for a in arr:

@@ -266,8 +266,8 @@ proc inPath[T](graph: Graph[T], goal, v: Vertex[T], state: var seq[Vertex[T]],
     graph.inPath(goal, next, state, acc)
     state = state[0 .. ^2]
 
-proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
-    seq[seq[Vertex[T]]] =
+proc paths*[T](graph: Graph[T], v1, v2: sink Vertex[T]):
+    unown seq[seq[Vertex[T]]] =
   ## Paths is searching for all availables path from v1 to v2.
   ## By default searching for paths is not cycled, e.g. we have edges,
   ## `a->b`, `b->c`, `c->d`, `a->c`, `a->d`, `c->b`
@@ -282,8 +282,6 @@ proc paths*[T](graph: Graph[T],v1, v2: Vertex[T]):
   ## for their particular purpose. The arg `edges` is the current edges
   ## that graph has. It's supplied when users want to use it but in most
   ## cases they can ignore it.
-  # if v1 notin graph.vertices or v2 notin graph.vertices:
-  #   return @[]
 
   var state = newseq[T]()
   graph.inpath(v2, v1, state, result)

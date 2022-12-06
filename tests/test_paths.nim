@@ -74,3 +74,9 @@ test "Graph paths":
     for i, g in graphs:
         let paths = g.paths(start, `end`)
         check expectedPaths[i] == paths.len
+
+    for i, g in graphs:
+        var count = 0
+        for _ in g.iterPaths(start, `end`):
+            inc count
+        check expectedPaths[i] == count

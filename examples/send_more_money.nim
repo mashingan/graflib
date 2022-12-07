@@ -6,7 +6,8 @@
 ## configuration using its permutations.
 ## We use (indirectly) the `paths` function provided in
 ## `permutations.permut` iterator.
-from std/sequtils import toSeq
+when defined(from0):
+    from std/sequtils import toSeq
 from std/times import cpuTime
 from ./permutations import permut
 
@@ -33,7 +34,15 @@ proc checks(cfg: sink seq[int]): bool =
     check (send + more) == money
 
 proc main =
-    let vals = toSeq(0..9)
+    # we're cheating by searching from 9 instead of 0
+    # to avoid searching too long if searching from 0
+    # (~4-5 seconds on my machine).
+    # To check the slow search, add option: `-d:from0`
+    # when compiling.
+    when not defined(from0):
+        let vals = [9,8,7,6,5,4,3,2,1,0]
+    else:
+        let vals = toSeq(0..9)
 
     var cfg: seq[int]
     let start = cpuTime()

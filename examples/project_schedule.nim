@@ -32,6 +32,11 @@
 ## from start to finish to get the traversed path record. Without this,
 ## we will get empty path due to no connectivity between start to finish.
 ## 
+## We have two part examples, PERT which stands for Project Evaluation and
+## Review Technique and second part, CPM which stands for Critical Path Method
+## which actually calculate the longest time needed to finish the project.
+## See below for detail explanation.
+## 
 ## combinoptim: https://homepages.cwi.nl/~lex/files/dict.pdf
 ## 
 import std/[hashes, sugar, sequtils]
@@ -139,9 +144,8 @@ proc next(day: Day; edges: seq[Edge[Day]]): seq[Day] =
     else:
         @[finishedDay]
 
-proc main =
-    var
-        g = buildGraph[Day](directed = true)
+proc pert =
+    var g = buildGraph[Day](directed = true)
     let buildingActivities = `a*`[Day, int](g, startingDay, finishedDay)
     withTrail: dump buildingActivities
     var totaldays = 0
@@ -161,5 +165,69 @@ proc main =
         echo "sequence of finished works: ",
             buildingActivities[^2].done & buildingActivities[^2].working[0].id
     dump totaldays
+pert()
 
-main()
+## This is second part of the example, which calculate the CPM of schedule.
+## While we want to reuse the same Day-state, we can't reuse the `next` function
+## defined for traversing the next state to visit. Hence in this part we
+## define the distinct type viz. CPMDay.
+## In this example we see several examples of borrowed implementations for `Day`
+## while we can safely define function `next` for `CPMDay`.
+## The main difference between CPMDay.next and Day.next is in identifying the
+## maximum days/costs needed to finish current working before moving to next
+## state. E.g.
+## before: ``let nextminday = min(nextday.working.mapIt(it.restOfTime))``
+## to: ``let nextmaxday = max(nextday.working.mapIt(it.restOfTime))``
+## And since the the `restOfTime` is same as cost needed to finish a work,
+## we choose the longest time need to finish this day state works.
+type CPMDay {.borrow: `.`.} = distinct Day
+
+func `==`(d1, d2: CPMDay): bool {.borrow.}
+func `$`(d: CPMDay): string {.borrow.}
+func hash(d: CPMDay): Hash {.borrow.}
+func cost(d1, d2: CPMDay): int = 0
+func distance(d1, d2: CPMDay): int = 0
+
+proc next(day: CPMDay; edges: seq[Edge[CPMDay]]): seq[CPMDay] =
+    withTrail: dump day
+    var nextday: CPMDay
+    nextday.done = day.done
+    nextday.prevDayCount = day.nextDayCount
+    for idwork in day.working:
+        var act = idwork
+        nextday.done.add act.id
+        for nextwork in act.requiredFor:
+            var nextact = buildingHome[nextwork]
+            if workPrequisites[nextact.id].subsetOf(nextday.done):
+                nextday.working.add nextact
+    if nextday.working.len > 0:
+        let nextmaxday = max(nextday.working.mapIt(it.restOfTime))
+        nextday.nextDayCount = nextday.prevDayCount + nextmaxday
+        @[nextday]
+    else:
+        @[CPMDay finishedDay]
+
+
+proc cpm =
+    var gcpm = buildGraph[CPMDay](directed = true)
+    echo "================="
+    echo "==Critical Path=="
+    let criticalpath = `a*`[CPMDay, int](gcpm, CPMDay startingDay, CPMDay finishedDay)
+    var totaldays = 0
+    for build in criticalpath:
+        let day = build.prevDayCount
+        if build.working.len > 0:
+            dump day
+            echo "working on"
+            for work in build.working:
+                dump work
+        else:
+            echo "day = ", totaldays
+            echo "project done!"
+        if build.nextDayCount != 0:
+            totaldays = build.nextDayCount
+    if criticalpath.len > 1:
+        echo "sequence of finished works: ",
+            criticalpath[^2].done & criticalpath[^2].working[0].id
+    dump totaldays
+cpm()

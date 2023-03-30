@@ -1,3 +1,5 @@
+Graflib	graflib.html#graflib	 Graflib	
+Example	graflib.html#graflib-example	  Example	
 Graph	graflib.html#Graph	graflib: Graph	
 Vertex	graflib.html#Vertex	graflib: Vertex	
 Edge	graflib.html#Edge	graflib: Edge	
@@ -22,7 +24,7 @@ degree	graflib.html#degree,Graph,Vertex	graflib: degree(graph: Graph; vertex: Ve
 buildDigraph	graflib.html#buildDigraph	graflib: buildDigraph[T](): Graph	
 newGraph	graflib.html#newGraph	graflib: newGraph[T](): GraphRef[T]	
 isConnected	graflib.html#isConnected,Graph[T]	graflib: isConnected[T](graph: Graph[T]): bool	
-paths	graflib.html#paths,Graph[T],sinkVertex[T],sinkVertex[T]	graflib: paths[T](graph: Graph[T]; v1, v2: sink Vertex[T]): unown seq[seq[Vertex[T]]]	
+paths	graflib.html#paths,Graph[T],,	graflib: paths[T](graph: Graph[T]; v1, v2: sink Vertex[T]): unown seq[seq[Vertex[T]]]	
 iterPaths	graflib.html#iterPaths.i,Graph[T],T,T	graflib: iterPaths[T](graph: Graph[T]; v1, v2: T): seq[T]	
 shortestPath	graflib.html#shortestPath,Graph[T],T,T	graflib: shortestPath[T](graph: Graph[T]; v1, v2: T): seq[Vertex[T]]	
 adjacencyMatrix	graflib.html#adjacencyMatrix,Graph[T]	graflib: adjacencyMatrix[T](graph: Graph[T]): seq[seq[int]]	
@@ -31,5 +33,3 @@ deleteVertex	graflib.html#deleteVertex,Graph[T],Vertex[T]	graflib: deleteVertex[
 deleteEdge	graflib.html#deleteEdge,Graph[T],Edge[T]	graflib: deleteEdge[T](graph: var Graph[T]; edge: Edge[T]): bool	
 `&lt;`	graflib.html#<,PriorityNode[T,C],PriorityNode[T,C]	graflib: `&lt;`[T, C](p1, p2: PriorityNode[T, C]): bool	
 a*	graflib.html#a*,Graph[T],T,T	graflib: a*[T, C](graph: var Graph[T]; start, goal: T): seq[Vertex[T]]	
-Graflib	graflib.html#graflib	 Graflib	
-Example	graflib.html#graflib-example	  Example	
